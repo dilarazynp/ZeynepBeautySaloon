@@ -1,0 +1,28 @@
+﻿@model IEnumerable<ZeynepBeautySaloon.Models.Personel> 
+
+<h2>Personel Listesi</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Telefon</th>
+            <th>Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var personel in Model)
+        {
+            <tr>
+                <td>@personel.Id</td>
+                <td>@personel.Ad</td>
+                <td>@personel.Soyad</td>
+                <td>@personel.Uzmanlik</td>
+                <td>@personel.Islemler</td>
+                <td>@personel.Durum</td>
+            </tr>
+        }
+    </tbody>
+</table>
