@@ -8,7 +8,8 @@
         public string Uzmanlik { get; set; }
         public string Islemler { get; set; }
 
-        public bool Durum { get; set; } 
+        public bool Durum { get; set; }
+        public string FotografUrl { get; set; }
 
     }
 }

@@ -1,0 +1,114 @@
+﻿/* Personel Sayfası Arka Planı */
+.personel-page {
+    background-image: url('../Images/Arkaplanlar/CalisanArkaplan.webp');
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    color: #333;
+    margin-bottom: 60px;
+    font-family: 'Roboto', sans-serif; /* Şık bir yazı tipi */
+}
+
+/* Personel Kartları */
+.personel-container {
+    margin-top: 30px;
+    background-color: rgba(255, 255, 255, 0.8); /* Şeffaf ama net bir zemin */
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1); /* Hafif gölge efekti */
+    backdrop-filter: blur(10px); /* Zemin bulanıklaştırma efekti */
+}
+
+/* Personel Kartı */
+.personel-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: rgba(255, 255, 255, 0.9); /* Hafif şeffaf zemin */
+}
+
+    /* Hover Etkisi */
+    .personel-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Daha belirgin bir gölge */
+    }
+
+/* Fotoğrafın Görünümü */
+.personel-img-top {
+    border-radius: 15px 15px 0 0;
+    height: 200px;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+}
+
+    .personel-img-top:hover {
+        opacity: 0.85; /* Fotoğraf üzerinde hoş bir geçiş efekti */
+    }
+
+/* Kart Gövdesi */
+.personel-card-body {
+    padding: 25px;
+}
+
+/* Kart Başlığı */
+.personel-card-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    text-transform: uppercase;
+}
+
+/* Kart Metni */
+.personel-card-text {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+/* Durum Bilgisi */
+.personel-status .badge {
+    font-size: 1rem;
+    padding: 8px 12px;
+    margin-top: 10px;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+    .personel-status .badge.bg-success {
+        background-color: #27ae60;
+        color: white;
+    }
+
+    .personel-status .badge.bg-danger {
+        background-color: #e74c3c;
+        color: white;
+    }
+
+    .personel-status .badge:hover {
+        background-color: #1abc9c; /* Hover ile daha çekici renk değişimi */
+    }
+
+/* Kolon Düzeni */
+.personel-col {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+}
+
+    /* Kolon Hover Efekti */
+    .personel-col:hover {
+        transform: scale(1.05); /* Kolon üzerine gelince hafif büyüme efekti */
+    }
+
+/* Başlık Düzeni */
+h2 {
+    font-size: 2rem;
+    color: #34495e;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+}

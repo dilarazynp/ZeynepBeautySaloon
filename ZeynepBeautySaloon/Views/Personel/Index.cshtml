@@ -1,28 +1,44 @@
-﻿@model IEnumerable<ZeynepBeautySaloon.Models.Personel> 
+﻿@model IEnumerable<ZeynepBeautySaloon.Models.Personel>
 
-<h2>Personel Listesi</h2>
+@{
+    Layout = "_Layout";  /* Layout sayfanızın adı */
+}
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Ad</th>
-            <th>Soyad</th>
-            <th>Telefon</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var personel in Model)
-        {
-            <tr>
-                <td>@personel.Id</td>
-                <td>@personel.Ad</td>
-                <td>@personel.Soyad</td>
-                <td>@personel.Uzmanlik</td>
-                <td>@personel.Islemler</td>
-                <td>@personel.Durum</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<body class="personel-page">
+    <div class="container personel-container">
+        <h2 class="text-center">Ekibimiz</h2>
+
+        <div class="row">
+            @foreach (var personel in Model)
+            {
+                string resimUrl = personel.FotografUrl;
+                <div class="col-md-4 mb-4 personel-col">
+                    <div class="card personel-card shadow-sm">
+                        <!-- Personel Fotoğrafı -->
+                        <img src="@Url.Content(resimUrl)" alt="Personel Fotoğrafı" class="card-img-top personel-img-top" />
+
+                        <!-- Personel Bilgileri -->
+                        <div class="card-body text-center personel-card-body">
+                            <h5 class="card-title personel-card-title">@personel.Ad @personel.Soyad</h5>
+                            <p class="card-text personel-card-text">
+                                <strong>Uzmanlık:</strong> @personel.Uzmanlik<br />
+                                <strong>İşlemler:</strong> @personel.Islemler
+                            </p>
+                            <!-- Durum Bilgisi -->
+                            <div class="personel-status">
+                                @if (personel.Durum)
+                                {
+                                    <span class="badge bg-success">✔ Müşterisi yok</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">✖ Müşterisi var</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>

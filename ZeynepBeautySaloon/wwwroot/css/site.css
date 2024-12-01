@@ -18,5 +18,11 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-image: url('../Images/Arkaplanlar/AnaSayfa.webp');
+    background-size: cover;
+    background-position: center;
 }
+
+
+
