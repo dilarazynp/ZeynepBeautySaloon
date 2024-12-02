@@ -1,0 +1,99 @@
+﻿/* Jumbotron (Başlık kısmı) Arka Planı */
+.jumbotron {
+    background: rgba(0, 0, 0, 0.6); /* Şeffaf siyah arka plan */
+    backdrop-filter: blur(10px); /* Arka planı bulanıklaştırma efekti */
+    border-radius: 0.75rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    position: relative; /* Arka plan bulanıklığının doğru çalışması için */
+    z-index: 1;
+}
+
+/* Sayfa Arka Planı */
+body {
+    background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+    background-size: cover;
+    background-position: center;
+    color: #333;
+}
+
+
+
+/* Tüm Kartlar için Arka Planı */
+.card {
+    border: none;
+    border-radius: 1rem; /* Kenarları yuvarlatmak için */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    max-width: 90%; /* Card boyutunu küçültmek için */
+    margin: 0 auto; /* Ortalamak için */
+    background: rgba(255, 255, 255, 0.6); /* Yarı saydam beyaz arka plan */
+    backdrop-filter: blur(10px); /* Arka planı bulanıklaştırma efekti */
+    position: relative; /* Card'ın kendi içinde pozisyon ayarı */
+}
+
+/* Card Hover Efekti */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    border-bottom: 1px solid #ddd;
+    border-radius: 1rem 1rem 0 0; /* Üst kenarları yuvarlatmak için */
+}
+
+.card-body {
+    position: relative; /* Arka planın üzerine yazıları eklemek için gerekli */
+    z-index: 1; /* Card-body'nin içerik katmanını belirlemek */
+}
+
+.card-title {
+    color: #258cfb;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* .bg-text Arka Planı */
+.card-body .bg-text {
+    background-color: rgba(0, 0, 0, 0.4); /* Yarı saydam siyah */
+    color: white;
+    font-weight: bold;
+    border: 3px solid #f1f1f1;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* bg-text'in diğer tüm içeriklerin üstünde olmasını sağlar */
+    width: 80%;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Hakkımızda Bölümü Arka Planı */
+.hakkimizda {
+    background-color: rgba(0, 0, 0, 0.4); /* Yarı saydam siyah */
+    color: white;
+    font-weight: bold;
+    border: 3px solid #f1f1f1;
+    width: 80%;
+    margin: 50px auto; /* Sayfanın ortasında olmayacak şekilde yerleştirir */
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px; /* Kenarları yuvarlatır */
+}
+
+/* Genel Sayfa düzeni */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+.row {
+    position: relative;
+    z-index: 1;
+}

@@ -1,28 +1,151 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/* Genel Stiller */
 body {
-    margin-bottom: 60px;
-    background-image: url('../Images/Arkaplanlar/AnaSayfa.webp');
-    background-size: cover;
-    background-position: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    /* Geçiþli Pembe, Lila ve Mor renkleri arka plana ekledik */
+    background: linear-gradient(90deg, #ff80b5, #a066ff, #c084fc);
+    color: #333;
+}
+
+/* Header (Navbar) Stili */
+.navbar {
+    background: linear-gradient(90deg, #a066ff, #c084fc);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand img {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.navbar-brand {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #fff !important;
+}
+
+.navbar-nav .nav-link {
+    color: #fff;
+    font-size: 1.1rem;
+    margin: 0 0.5rem;
+    transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+    .navbar-nav .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+    }
+
+.navbar-toggler {
+    border: none;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' viewBox='0 0 30 30'%3E%3Cpath stroke='rgba%28255, 255, 255, 0.5%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Orantýlý Logo Boyutu */
+/* Logo Boyutlandýrma */
+.navbar-brand img {
+    max-height: 120px; /* Maksimum yükseklik ayarý */
+    width: auto; /* Geniþlik oranýný korur */
 }
 
 
+/* Footer Stili */
+.footer {
+    background: #4B4B4B;
+    color: #fff;
+    font-size: 0.95rem;
+    padding: 2rem 0;
+    border-top: 3px solid #555;
+}
 
+    .footer h5 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: #fff;
+    }
+
+    .footer a {
+        color: #b5b5b5;
+        text-decoration: none;
+        transition: color 0.3s ease, text-shadow 0.3s ease;
+    }
+
+        .footer a:hover {
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+        }
+
+    .footer .list-unstyled {
+        padding-left: 0;
+        list-style: none;
+    }
+
+        .footer .list-unstyled li {
+            margin-bottom: 0.7rem;
+        }
+
+    .footer .social-icons img {
+        height: 30px;
+        margin: 0 10px;
+        transition: transform 0.3s ease;
+    }
+
+        .footer .social-icons img:hover {
+            transform: scale(1.2);
+        }
+
+    .footer .social-icons a {
+        color: #b5b5b5;
+        transition: color 0.3s ease;
+    }
+
+        .footer .social-icons a:hover {
+            color: #ff69b4;
+        }
+
+/* Genel Hover Efektleri */
+a:hover {
+    text-decoration: none;
+}
+
+/* Responsive - Mobile Friendly */
+@media (max-width: 576px) {
+    .navbar-nav {
+        text-align: center;
+    }
+
+    .footer {
+        text-align: center;
+    }
+}
+/* Sosyal medya ikonlarý için düzenleme */
+.social-icons ul li a {
+    display: flex; /* Flexbox ile ikon ve yazýyý hizalayýn */
+    align-items: center; /* Yatayda hizalamak için */
+    gap: 8px; /* Ýkon ile metin arasýna boþluk ekleyin */
+    text-decoration: none; /* Baðlantý alt çizgilerini kaldýrýn */
+    color: #b5b5b5; /* Baðlantý rengini ayarlayýn */
+    font-size: 1.1rem; /* Yazý boyutunu ayarlayýn */
+}
+
+    .social-icons ul li a:hover {
+        color: #fff; /* Hoverda renk deðiþimi */
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.7); /* Hoverda metin gölgesi */
+    }
+
+.social-icons i {
+    font-size: 1.5rem; /* Ýkon boyutunu ayarlayýn */
+    margin-right: 8px; /* Ýkon ile metin arasýna boþluk ekler */
+    transition: transform 0.3s ease; /* Hoverda animasyon efekti */
+}
+
+    /* Hoverda ikonlarý büyütmek */
+    .social-icons i:hover {
+        transform: scale(1.2); /* Hoverda ikonu büyütme */
+    }
+
+.social-icons a:hover i {
+    transform: scale(1.2); /* Ýkon hover efektini uygulama */
+}

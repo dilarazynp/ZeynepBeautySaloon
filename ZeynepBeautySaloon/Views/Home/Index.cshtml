@@ -1,9 +1,12 @@
 ﻿@{
     ViewData["Title"] = "Ana Sayfa";
 }
+<link rel="stylesheet" href="~/css/AnaSayfa.css"> <!-- Özel CSS Dosyası -->
+<link rel="stylesheet" href="~/css/site.css"> <!-- Özel CSS Dosyası -->
+
 
 <div class="container mt-4">
-    <div class="jumbotron text-center">
+    <div class="jumbotron text-center bg-light rounded p-5">
         <h1 class="display-4">Zeynep Beauty Saloon</h1>
         <p class="lead">Güzelliğinize değer katmak için buradayız!</p>
         <hr class="my-4">
@@ -11,41 +14,67 @@
             Zeynep Beauty Saloon, modern ve kaliteli hizmet anlayışıyla size en iyi deneyimi sunmayı hedefler.
             Uzman kadromuz ve son teknoloji ekipmanlarımız ile güzelliğinize değer katıyoruz.
         </p>
-        <a class="btn btn-primary btn-lg" href="#" role="button">Hizmetlerimizi Keşfedin</a>
+    </div>
+
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <img src="/Images/AnaSayfa/birinci.jpeg" class="card-img-top p-3" alt="Saç Kesimi">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Profesyonel Saç Kesimi</h5>
+                    <p class="card-text">Tarzınızı en iyi şekilde yansıtan saç kesimi hizmetimizle fark yaratın.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <img src="/images/AnaSayfa/ikinci.jpeg" class="card-img-top p-3" alt="Cilt Bakımı">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Cilt Bakımı</h5>
+                    <p class="card-text">Doğal ve sağlıklı bir cilt için profesyonel bakım hizmetlerimizden yararlanın.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <img src="/images/AnaSayfa/ucuncu.jpeg" class="card-img-top p-3" alt="Makyaj">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Özel Gün Makyajı</h5>
+                    <p class="card-text">Özel günleriniz için güzelliğinizi ön plana çıkaran makyaj hizmeti.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row mt-5">
-        <div class="col-md-8 mx-auto text-center">
-            <h2>Hakkımızda</h2>
-            <p>
-                Zeynep Beauty Saloon, yılların tecrübesini modern yeniliklerle birleştiren bir güzellik ve bakım salonudur.
-                Saç kesiminden renklendirmeye, cilt bakımından makyaja kadar geniş bir hizmet yelpazesi sunuyoruz.
-            </p>
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <img src="/images/AnaSayfa/dort.jpeg" class="card-img-top p-3" alt="Spa Hizmetleri">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Spa Hizmetleri</h5>
+                    <p class="card-text">Stresinizi atabileceğiniz rahatlatıcı bir deneyim sunuyoruz.</p>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6 mx-auto text-center">
-            <img src="/images/salon.jpg" class="img-fluid rounded" alt="Kuaför Salonu">
-        </div>
-    </div>
-
-    <div class="row mt-5">
-        <div class="col-md-4 text-center">
-            <img src="/images/scissors.png" class="img-fluid mb-3" alt="Saç Kesimi">
-            <h3>Profesyonel Saç Kesimi</h3>
-            <p>Tarzınızı en iyi şekilde yansıtan saç kesimi hizmetimizle fark yaratın.</p>
-        </div>
-        <div class="col-md-4 text-center">
-            <img src="/images/skincare.png" class="img-fluid mb-3" alt="Cilt Bakımı">
-            <h3>Cilt Bakımı</h3>
-            <p>Doğal ve sağlıklı bir cilt için profesyonel bakım hizmetlerimizden yararlanın.</p>
-        </div>
-        <div class="col-md-4 text-center">
-            <img src="/images/makeup.png" class="img-fluid mb-3" alt="Makyaj">
-            <h3>Özel Gün Makyajı</h3>
-            <p>Özel günleriniz için güzelliğinizi ön plana çıkaran makyaj hizmeti.</p>
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <img src="/images/AnaSayfa/besinci.jpeg" class="card-img-top p-3" alt="Saç Renklendirme">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Saç Renklendirme</h5>
+                    <p class="card-text">Kendinize uygun tonları keşfedin ve tarzınızı yeniden tanımlayın.</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer class="text-center mt-5">
-        <p>&copy; 2024 Zeynep Beauty Saloon. Tüm Hakları Saklıdır.</p>
-    </footer>
+    <!-- Hakkımızda Bölümü -->
+    <div class="hakkimizda">
+        <h2>Hakkımızda</h2>
+        <p>
+            Zeynep Beauty Saloon, modern ve kaliteli hizmet anlayışına sahip bir güzellik salonudur. Uzman kadromuz
+            ve son teknoloji ekipmanlarımız ile her zaman müşteri memnuniyetini ön planda tutarak, estetik ve bakım
+            hizmetlerimizi sunuyoruz. Bizimle güzellik yolculuğunuzda her adımda yanınızdayız!
+        </p>
+    </div>
 </div>

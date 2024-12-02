@@ -1,53 +1,120 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ZeynepBeautySaloon</title>
+
+    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/Personel.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ZeynepBeautySaloon.styles.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css"> <!-- Özel CSS Dosyası -->
 </head>
+
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ZeynepBeautySaloon</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <!-- Logo sadece gösterilecek, yazı kaldırılacak -->
+                <a class="navbar-brand img" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png" alt="Logo" style="max-height: 120px; width: auto;" />
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Ana Sayfa</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" asp-area="" asp-controller="Personel" asp-action="Index">Ekibimiz</a>
+                        </li>
+                    </ul>
+                    <!-- Üye Ol / Giriş Yap Bağlantıları -->
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Account/Login">Giriş Yap</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Personel" asp-action="Index">Ekibimiz</a>
+                            <a class="nav-link" href="/Account/Register">Üye Ol</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
-            @RenderBody()
+            @RenderBody() <!-- Burada ilgili view'in içeriği render edilecektir -->
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <!-- Footer -->
+    <footer class="footer mt-4 text-muted bg-dark pt-3 pb-3">
         <div class="container">
-            &copy; 2024 - ZeynepBeautySaloon - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row">
+                <div class="col-md-4">
+                    <h5 class="footer-heading text-light">İletişim</h5>
+                    <p class="text-light"><a href="mailto:info@zeynepbeauty.com" class="text-light">Email: info@zeynepbeauty.com</a></p>
+                    <p class="text-light">Adres: Konya, Türkiye</p>
+                    <p class="text-light">Telefon: +90 555 123 4567</p>
+                </div>
+                <!-- Hızlı Bağlantılar ve Harita -->
+                <div class="col-md-4">
+                    <h5 class="footer-heading text-light">Hızlı Bağlantılar</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="../Views/Personel/Index.cshtml" class="text-light">Ekibimiz</a></li>
+                        <li><a href="#" class="text-light">Hakkımızda</a></li>
+                        <li><a href="#" class="text-light">Randevu Al</a></li>
+                        <!-- Konum Linki -->
+                        <li><a href="https://maps.app.goo.gl/UgqpBPagLRtfkQbt7" target="_blank" class="text-light">Konumumuza Git</a></li> <!-- Google Maps Linki -->
+                    </ul>
+                </div>
+
+                <div class="col-md-4">
+                    <h5 class="footer-heading text-light">Sosyal Medya</h5>
+                    <div class="social-icons">
+                        <ul class="list-unstyled">
+                            <li>
+                                <a href="#" class="text-light" target="_blank">
+                                    <i class="bi bi-instagram"></i> Instagram
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-light" target="_blank">
+                                    <i class="bi bi-facebook"></i> Facebook
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-light" target="_blank">
+                                    <i class="bi bi-twitter"></i> Twitter
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+            </div>
+            <p class="mt-3 text-center text-light">&copy; 2024 ZeynepBeautySaloon | <a href="#" class="text-light">Gizlilik Politikası</a></p>
+            <p class="text-center text-light">Designed with ❤ by ZeynepBeautySaloon Ekibi</p>
         </div>
     </footer>
+
+    <!-- JQuery -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <!-- Bootstrap JS -->
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Site Özel JS -->
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>
