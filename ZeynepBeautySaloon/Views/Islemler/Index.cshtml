@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ZeynepBeautySaloon.Models.Islemler>
+
+<h1>İşlemler</h1>
+<p>
+    <a href="@Url.Action("Create", "Islemler")" class="btn btn-primary">Yeni İşlem Ekle</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>İşlem Adı</th>
+            <th>Süre</th>
+            <th>Ücret</th>
+            <th>Personel</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var islem in Model)
+            {
+                <tr>
+                    <td>@islem.Id</td>
+                    <td>@islem.IslemAdi</td>
+                    <td>@islem.Sure dakika</td>
+                    <td>@islem.Ucret ₺</td>
+                    <td>@islem.Personel?.Ad</td> <!-- Personel null olabilir, ona dikkat et -->
+                    <td>
+                        <a href="@Url.Action("Edit", "Islemler", new { id = islem.Id })" class="btn btn-warning">Düzenle</a>
+                        <a href="@Url.Action("Delete", "Islemler", new { id = islem.Id })" class="btn btn-danger">Sil</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6">Herhangi bir işlem bulunmamaktadır.</td>
+            </tr>
+        }
+    </tbody>
+</table>

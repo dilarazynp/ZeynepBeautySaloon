@@ -5,6 +5,13 @@ body {
     background: linear-gradient(90deg, #ff80b5, #a066ff, #c084fc);
     color: #333;
 }
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+
 
 /* Header (Navbar) Stili */
 .navbar {

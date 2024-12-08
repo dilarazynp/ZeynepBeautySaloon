@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ZeynepBeautySaloon.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241205170659_addIslemlerTable")]
+    partial class addIslemlerTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,9 +47,7 @@ namespace ZeynepBeautySaloon.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonelId")
-                        .IsUnique()
-                        .HasFilter("[PersonelId] IS NOT NULL");
+                    b.HasIndex("PersonelId");
 
                     b.ToTable("Islemler");
                 });
@@ -67,6 +68,10 @@ namespace ZeynepBeautySaloon.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FotografUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Islemler")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -130,16 +135,10 @@ namespace ZeynepBeautySaloon.Migrations
             modelBuilder.Entity("ZeynepBeautySaloon.Models.Islemler", b =>
                 {
                     b.HasOne("ZeynepBeautySaloon.Models.Personel", "Personel")
-                        .WithOne("Islemler")
-                        .HasForeignKey("ZeynepBeautySaloon.Models.Islemler", "PersonelId");
+                        .WithMany()
+                        .HasForeignKey("PersonelId");
 
                     b.Navigation("Personel");
-                });
-
-            modelBuilder.Entity("ZeynepBeautySaloon.Models.Personel", b =>
-                {
-                    b.Navigation("Islemler")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

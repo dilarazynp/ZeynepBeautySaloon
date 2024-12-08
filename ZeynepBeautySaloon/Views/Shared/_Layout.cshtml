@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var userName = ViewData["UserName"] as string;
+}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -18,7 +21,7 @@
             <div class="container-fluid">
                 <!-- Logo sadece gösterilecek, yazı kaldırılacak -->
                 <a class="navbar-brand img" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/logo.png" alt="Logo" style="max-height: 120px; width: auto;" />
+                    <img src="~/images/logo.jpg" alt="Logo" style="max-height: 120px; width: auto;" />
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
@@ -33,15 +36,33 @@
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Personel" asp-action="Index">Ekibimiz</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Islemler" asp-action="Index">Hizmetler</a>
+                        </li>
                     </ul>
                     <!-- Üye Ol / Giriş Yap Bağlantıları -->
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Account/Login">Giriş Yap</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/Account/Register">Üye Ol</a>
-                        </li>
+                        @if (!string.IsNullOrEmpty(userName))
+                        {
+                            <span class="badge bg-success">Hoş geldiniz, @userName!</span>
+                            <a class="btn btn-danger ml-2" href="/Uye/Logout">Çıkış Yap</a>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Uye" asp-action="Register">Üye Ol</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Uye" asp-action="Login">Giriş Yap</a>
+                            </li>
+                        }
+                       
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" href="/Admin/Index">Admin Paneli</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

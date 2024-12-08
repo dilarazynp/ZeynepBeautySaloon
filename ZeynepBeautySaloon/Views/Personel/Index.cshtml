@@ -5,7 +5,6 @@
 }
 <link rel="stylesheet" href="~/css/Personel.css"> <!-- Özel CSS Dosyası -->
 
-
 <body class="personel-page">
     <div class="container personel-container">
         <h2 class="text-center">Ekibimiz</h2>
@@ -30,11 +29,11 @@
                             <div class="personel-status">
                                 @if (personel.Durum)
                                 {
-                                    <span class="badge bg-success">✔ Müşterisi yok</span>
+                                    <span class="badge bg-success">✔ Müsait</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-danger">✖ Müşterisi var</span>
+                                    <span class="badge bg-danger">✖ Müsait Değil</span>
                                 }
                             </div>
                         </div>
