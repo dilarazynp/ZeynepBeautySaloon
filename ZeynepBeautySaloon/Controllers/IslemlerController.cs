@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ZeynepBeautySaloon.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 
 public class IslemlerController : Controller
 {
@@ -49,73 +50,59 @@ public class IslemlerController : Controller
         
     }
 
-
-    [HttpGet]
-    public IActionResult Edit(int id)
+    private bool IslemExists(int id)
     {
-        var islemler = _context.Islemler.FirstOrDefault(i => i.Id == id);
-        if (islemler == null)
-        {
-            return NotFound();
-        }
-
-        // Personel Listesi
-        var personelListesi = _context.Personeller
-            .Where(p => p.Durum == true) // Personel durumu aktif olmalı
-            .Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = $"{p.Ad} {p.Soyad}" // Personel adı soyadı ile görünecek
-            }).ToList();
-
-        ViewBag.PersonelId = new SelectList(personelListesi, "Value", "Text", islemler.PersonelId);
-
-        return View(islemler); // Model ile View'a gönder
+        return _context.Islemler.Any(e => e.Id == id);
     }
 
 
+    // Edit (GET) metodunda Islemler üzerinden DbContext kullanımı
+
+
+    public async Task<IActionResult> Edit(int? id)
+    {
+
+        if (id == null) return NotFound();
+
+        var islem = await _context.Islemler.FindAsync(id);
+        if (islem == null) return NotFound();
+
+        // PersonelId'leri ViewData'ya ekleyin
+        ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", islem.PersonelId);
+
+        return View(islem);
+    }
+
+    // Düzenleme (POST)
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Edit(int id, Islemler islemler)
+    public async Task<IActionResult> Edit(int id, Islemler islem)
     {
-        if (id != islemler.Id)
-        {
+
+        if (id != islem.Id)
             return NotFound();
-        }
 
         if (ModelState.IsValid)
         {
             try
             {
-                _context.Update(islemler); // Veritabanı güncelleniyor
-                _context.SaveChanges();   // Değişiklikler kaydediliyor
+                _context.Update(islem);
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!_context.Islemler.Any(i => i.Id == islemler.Id))
-                {
+                if (!IslemExists(islem.Id))
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
-            return RedirectToAction(nameof(Index)); // Güncelleme sonrası listeye yönlendir
+            return RedirectToAction(nameof(Index));
         }
 
-        // Eğer model geçerli değilse, personel listesini tekrar yükle
-        var personelListesi = _context.Personeller
-            .Where(p => p.Durum == true)
-            .Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = $"{p.Ad} {p.Soyad}"
-            }).ToList();
+        // Eğer doğrulama hatası varsa, listeyi yeniden doldur
+        ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", islem.PersonelId);
 
-        ViewBag.PersonelId = new SelectList(personelListesi, "Value", "Text", islemler.PersonelId);
-
-        return View(islemler); // Modeli tekrar view'a gönder
+        return View(islem);
     }
 
 

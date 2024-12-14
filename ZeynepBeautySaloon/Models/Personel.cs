@@ -6,10 +6,14 @@
         public string Ad { get; set; }
         public string Soyad { get; set; }
         public string Uzmanlik { get; set; }
-        public Islemler Islemler { get; set; }
+
+       // public Islemler Islemler { get; set; }
 
         public bool Durum { get; set; }
         public string FotografUrl { get; set; }
+
+        // Navigasyon özelliği
+        public virtual ICollection<Islemler>? Islemler { get; set; }
 
     }
 }

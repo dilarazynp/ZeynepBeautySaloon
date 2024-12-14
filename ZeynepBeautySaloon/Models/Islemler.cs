@@ -10,7 +10,7 @@ namespace ZeynepBeautySaloon.Models
 
         [Required(ErrorMessage = "İşlem adı gereklidir.")]
         [StringLength(100, ErrorMessage = "İşlem adı en fazla 100 karakter olabilir.")]
-        public string IslemAdi { get; set; }
+        public required string IslemAdi { get; set; }
 
         [Required(ErrorMessage = "Süre gereklidir.")]
         [Range(1, 480, ErrorMessage = "Süre 1 ile 480 dakika arasında olmalıdır.")]
@@ -20,11 +20,11 @@ namespace ZeynepBeautySaloon.Models
         [Range(1, 10000, ErrorMessage = "Ücret 1 ile 10,000 arasında olmalıdır.")]
         public decimal Ucret { get; set; }
 
-        [ForeignKey("Personel")] // Yabancı anahtar
-        public int? PersonelId { get; set; } // Zorunlu değil (null olabilir)
+        [ForeignKey("Personel")]
+        [Required(ErrorMessage = "Personel seçimi gereklidir.")]
+        public int PersonelId { get; set; }
 
-        // Navigasyon özelliği
-        public virtual Personel Personel { get; set; }
+        public virtual Personel? Personel { get; set; }
 
     }
 }

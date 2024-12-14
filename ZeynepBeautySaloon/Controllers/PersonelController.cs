@@ -23,5 +23,7 @@ namespace ZeynepBeautySaloon.Controllers
             var personeller = await _context.Personeller.ToListAsync();
             return View(personeller); // View'e Personeller verisini gönderiyoruz
         }
+
+
     }
 }
