@@ -1,9 +1,7 @@
 ﻿@model IEnumerable<ZeynepBeautySaloon.Models.Islemler>
 
 <h1>İşlemler</h1>
-<p>
-    <a href="@Url.Action("Create", "Islemler")" class="btn btn-primary">Yeni İşlem Ekle</a>
-</p>
+
 <table class="table">
     <thead>
         <tr>
@@ -27,8 +25,13 @@
                     <td>@islem.Ucret ₺</td>
                     <td>@islem.Personel?.Ad</td> <!-- Personel null olabilir, ona dikkat et -->
                     <td>
-                        <a href="@Url.Action("Edit", "Islemler", new { id = islem.Id })" class="btn btn-warning">Düzenle</a>
-                        <a href="@Url.Action("Delete", "Islemler", new { id = islem.Id })" class="btn btn-danger">Sil</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <a href="@Url.Action("Create", "Islemler")" class="btn btn-primary">Yeni İşlem Ekle</a>
+                            <a href="@Url.Action("Edit", "Islemler", new { id = islem.Id })" class="btn btn-warning">Düzenle</a>
+                            <a href="@Url.Action("Delete", "Islemler", new { id = islem.Id })" class="btn btn-danger">Sil</a>
+                            <a href="@Url.Action("IslemDetay", "Islemler", new { id = islem.Id })" class="btn btn-info">IslemDetay</a>
+                        }
                     </td>
                 </tr>
             }

@@ -13,42 +13,58 @@ public class IslemlerController : Controller
         _context = context;
     }
 
-    // Kullanıcının işlemleri görüntülemesi
     public IActionResult Index()
     {
-        var islemler = _context.Islemler.ToList();
+        var islemler = _context.Islemler.Include(i => i.Personel).ToList();
         return View(islemler);
     }
 
     public IActionResult Create()
     {
-        // Aktif personel listesi
         var personelListesi = _context.Personeller
-            .Where(p => p.Durum == true) // Sadece aktif personel
+            .Where(p => p.Durum == true) 
             .Select(p => new SelectListItem
             {
                 Value = p.Id.ToString(),
-                Text = $"{p.Ad} {p.Soyad}" // Personelin adı ve soyadı
+                Text = $"{p.Ad} {p.Soyad}" 
             }).ToList();
 
-        // Personel listesini ViewData'ya gönderiyoruz
         ViewData["PersonelId"] = new SelectList(personelListesi, "Value", "Text");
 
         return View();
     }
 
-    // İşlem ekleme işlemi
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create(Islemler islemler)
     {
-        
-            _context.Add(islemler);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
-        
-        
+
+        _context.Add(islemler);
+        _context.SaveChanges();
+        return RedirectToAction(nameof(Index));
+
+
     }
+
+
+    public IActionResult IslemDetay(int? id)
+    {
+        if (id is null)
+        {
+            TempData["msj"] = "lütfen dataları düzgün giriniz";
+            return RedirectToAction("index");
+        }
+        var islem = _context.Islemler.Include(i => i.Personel).FirstOrDefault(i => i.Id == id);
+        if (islem is null)
+        {
+            TempData["msj"] = "islem bulunamadı";
+            return RedirectToAction("index");
+        }
+        return View();
+    }
+
+
+
 
     private bool IslemExists(int id)
     {
@@ -56,7 +72,6 @@ public class IslemlerController : Controller
     }
 
 
-    // Edit (GET) metodunda Islemler üzerinden DbContext kullanımı
 
 
     public async Task<IActionResult> Edit(int? id)
@@ -67,13 +82,11 @@ public class IslemlerController : Controller
         var islem = await _context.Islemler.FindAsync(id);
         if (islem == null) return NotFound();
 
-        // PersonelId'leri ViewData'ya ekleyin
         ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", islem.PersonelId);
 
         return View(islem);
     }
 
-    // Düzenleme (POST)
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, Islemler islem)
@@ -99,14 +112,12 @@ public class IslemlerController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        // Eğer doğrulama hatası varsa, listeyi yeniden doldur
         ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", islem.PersonelId);
 
         return View(islem);
     }
 
 
-    // İşlem silme sayfası (GET)
     public IActionResult Delete(int id)
     {
         var islem = _context.Islemler.Include(i => i.Personel).FirstOrDefault(i => i.Id == id);
@@ -119,7 +130,6 @@ public class IslemlerController : Controller
         return View(islem);
     }
 
-    // İşlem silme işlemi (POST)
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(int id)

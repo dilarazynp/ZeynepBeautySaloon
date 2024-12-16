@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,14 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // GDPR uyumluluðu için gerekli
 });
 
+// Add authentication services
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Uye/Login";
+        options.LogoutPath = "/Uye/Logout";
+    });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,11 +45,10 @@ app.UseStaticFiles();
 app.UseSession();
 
 app.UseRouting();
-app.UseAuthentication(); // Eðer kimlik doðrulama varsa
+app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();
 
 app.MapControllers();
-
 
 // Yetkisiz giriþler için yönlendirme
 app.UseStatusCodePagesWithRedirects("/Account/Login?returnUrl=/Admin");

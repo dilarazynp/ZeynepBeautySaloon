@@ -41,6 +41,8 @@ namespace ZeynepBeautySaloon.Models
         [RegularExpression(@"^(?=.*[A-Z])(?=.*\W).{8,}$", ErrorMessage = "Şifre en az 8 karakter uzunluğunda olmalı, bir büyük harf ve bir özel karakter içermelidir.")]
         public string PasswordHash { get; set; }
 
-       
+        public string Rol { get; set; } = "User"; 
+
+
     }
 }

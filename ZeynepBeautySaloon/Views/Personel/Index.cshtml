@@ -9,6 +9,14 @@
     <div class="container personel-container">
         <h2 class="text-center">Ekibimiz</h2>
 
+        <p>
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="@Url.Action("Create", "Personel")" class="btn btn-primary">Yeni Personel Ekle</a>
+
+            }
+        </p>
+
         <div class="row">
             @foreach (var personel in Model)
             {
@@ -36,6 +44,14 @@
                                     <span class="badge bg-danger">✖ Müsait Değil</span>
                                 }
                             </div>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <div class="mt-2">
+                                    <a href="@Url.Action("Edit", "Personel", new { id = personel.Id })" class="btn btn-warning">Düzenle</a>
+                                    <a href="@Url.Action("Delete", "Personel", new { id = personel.Id })" class="btn btn-danger">Sil</a>
+                                    <a href="@Url.Action("PersonelDetay", "Personel", new { id = personel.Id })" class="btn btn-info">PersonelDetay</a>
+                                </div>
+                            }
                         </div>
                     </div>
                 </div>

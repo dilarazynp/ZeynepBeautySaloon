@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using ZeynepBeautySaloon.Models;
 using BCrypt.Net;
 
@@ -9,12 +12,14 @@ namespace ZeynepBeautySaloon.Controllers
     {
         private readonly AppDbContext _context;
 
-        // Constructor, veritabanı bağlamını alır
+       
+        private readonly string AdminEmail = Environment.GetEnvironmentVariable("AdminEmail") ?? "admin@admin.com";
+        private readonly string AdminPassword = Environment.GetEnvironmentVariable("AdminPassword") ?? BCrypt.Net.BCrypt.HashPassword("sau");
+
         public UyeController(AppDbContext context)
         {
             _context = context;
         }
-
 
 
         [HttpGet]
@@ -28,30 +33,47 @@ namespace ZeynepBeautySaloon.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Kullanıcı adı, e-posta veya telefon numarası benzersiz mi kontrol et
-                bool isExistingUser = _context.Uyeler.Any(u =>
-                    u.UserName == uye.UserName ||
-                    u.Email == uye.Email ||
-                    u.Telefon == uye.Telefon);
-
-                if (isExistingUser)
+               
+                if (_context.Uyeler.Any(u =>
+                    u.UserName == uye.UserName))
                 {
-                    ViewBag.Message = "Kullanıcı adı, e-posta veya telefon numarası zaten kayıtlı.";
+                    ModelState.AddModelError("UserName", "Kullanıcı adı zaten kayıtlı.");
+                }
+
+                if (_context.Uyeler.Any(u =>
+                    u.Email == uye.Email))
+                {
+                    ModelState.AddModelError("Email", "E-posta zaten kayıtlı.");
+                }
+
+                if (_context.Uyeler.Any(u =>
+                    u.Telefon == uye.Telefon))
+                {
+                    ModelState.AddModelError("Telefon", "Telefon numarası zaten kayıtlı.");
+                }
+
+                
+                if (!ModelState.IsValid)
+                {
                     return View(uye);
                 }
 
-                // Şifreyi hashle
+               
                 uye.PasswordHash = BCrypt.Net.BCrypt.HashPassword(uye.PasswordHash);
 
-                // Veritabanına kaydet
+                
+                uye.Rol = "User";
+
+                
                 _context.Uyeler.Add(uye);
                 _context.SaveChanges();
 
+                TempData["SuccessMessage"] = "Üye olma işlemi başarılı! Giriş yapabilirsiniz.";
                 return RedirectToAction("Login");
             }
+
             return View(uye);
         }
-
 
 
         [HttpGet]
@@ -61,35 +83,48 @@ namespace ZeynepBeautySaloon.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(string Username, string Password)
+        public async Task<IActionResult> Login(string Email, string Password)
         {
-            var uye = _context.Uyeler.SingleOrDefault(u => u.UserName == Username);
-            if (uye != null && BCrypt.Net.BCrypt.Verify(Password, uye.PasswordHash))
+            
+            if (Email == AdminEmail && BCrypt.Net.BCrypt.Verify(Password, AdminPassword))
             {
-                // Kullanıcı doğrulandı
-                HttpContext.Session.SetString("UserName", uye.UserName);
-
-                // Giriş yaptıktan sonra ana sayfaya yönlendir
+                await SignInUser("Admin", "Admin");
                 return RedirectToAction("Index", "Home");
             }
-            else
+
+           
+            var uye = _context.Uyeler.SingleOrDefault(u => u.Email == Email);
+
+            if (uye != null && BCrypt.Net.BCrypt.Verify(Password, uye.PasswordHash))
             {
-                ViewBag.Message = "Kullanıcı adı veya şifre hatalı.";
+                await SignInUser(uye.UserName, uye.Rol);
+                return RedirectToAction("Index", "Home");
             }
+
+          
+            ModelState.AddModelError(string.Empty, "E-posta veya şifre hatalı.");
             return View();
         }
 
-
         [HttpGet]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            // Kullanıcı oturumunu sonlandır
-            HttpContext.Session.Remove("Username");
-
-            // Ana sayfaya yönlendir
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
 
+        private async Task SignInUser(string userName, string role)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, userName),
+                new Claim(ClaimTypes.Role, role)
+            };
 
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        }
     }
 }

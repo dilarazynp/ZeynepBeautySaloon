@@ -1,5 +1,6 @@
 ﻿@{
-    var userName = ViewData["UserName"] as string;
+    var userName = ViewData["UserName"] as string; // Kullanıcı adı ViewData'dan alınıyor
+    var userRole = ViewData["Role"] as string; // Kullanıcı rolü ViewData'dan alınıyor (Admin kontrolü için)
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +20,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
             <div class="container-fluid">
-                <!-- Logo sadece gösterilecek, yazı kaldırılacak -->
+                <!-- Logo -->
                 <a class="navbar-brand img" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/images/logo.jpg" alt="Logo" style="max-height: 120px; width: auto;" />
                 </a>
@@ -40,14 +41,22 @@
                             <a class="nav-link" asp-area="" asp-controller="Islemler" asp-action="Index">Hizmetler</a>
                         </li>
                     </ul>
-                    <!-- Üye Ol / Giriş Yap Bağlantıları -->
+
+                    <!-- Üye veya Admin Girişi -->
                     <ul class="navbar-nav ms-auto">
-                        @if (!string.IsNullOrEmpty(userName))
+                        @if (User.Identity.IsAuthenticated) // Kullanıcı giriş yaptıysa
                         {
-                            <span class="badge bg-success">Hoş geldiniz, @userName!</span>
+                            <span class="badge bg-warning">Hoş geldiniz, @User.Identity.Name!</span>
                             <a class="btn btn-danger ml-2" href="/Uye/Logout">Çıkış Yap</a>
+
+                            @if (User.IsInRole("Admin")) // Admin rolündeyse
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/Admin/Index">Admin Paneli</a>
+                                </li>
+                            }
                         }
-                        else
+                        else // Giriş yapmadıysa
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Uye" asp-action="Register">Üye Ol</a>
@@ -56,13 +65,7 @@
                                 <a class="nav-link" asp-area="" asp-controller="Uye" asp-action="Login">Giriş Yap</a>
                             </li>
                         }
-                       
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" href="/Admin/Index">Admin Paneli</a>
-                            </li>
-                        }
+
                     </ul>
                 </div>
             </div>
@@ -93,10 +96,9 @@
                         <li><a href="#" class="text-light">Hakkımızda</a></li>
                         <li><a href="#" class="text-light">Randevu Al</a></li>
                         <!-- Konum Linki -->
-                        <li><a href="https://maps.app.goo.gl/UgqpBPagLRtfkQbt7" target="_blank" class="text-light">Konumumuza Git</a></li> <!-- Google Maps Linki -->
+                        <li><a href="https://maps.app.goo.gl/UgqpBPagLRtfkQbt7" target="_blank" class="text-light">Konumumuza Git</a></li>
                     </ul>
                 </div>
-
                 <div class="col-md-4">
                     <h5 class="footer-heading text-light">Sosyal Medya</h5>
                     <div class="social-icons">
@@ -119,8 +121,6 @@
                         </ul>
                     </div>
                 </div>
-
-
             </div>
             <p class="mt-3 text-center text-light">&copy; 2024 ZeynepBeautySaloon | <a href="#" class="text-light">Gizlilik Politikası</a></p>
             <p class="text-center text-light">Designed with ❤ by ZeynepBeautySaloon Ekibi</p>
