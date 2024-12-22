@@ -12,5 +12,7 @@
 
         public virtual ICollection<Islemler>? Islemler { get; set; }
 
+        public virtual ICollection<Randevu>? Randevular { get; set; }
+
     }
 }

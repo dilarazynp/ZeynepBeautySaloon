@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ZeynepBeautySaloon.Migrations; 
-using ZeynepBeautySaloon.Models; 
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using ZeynepBeautySaloon.Models;
 
 namespace ZeynepBeautySaloon.Controllers
 {
@@ -11,62 +9,46 @@ namespace ZeynepBeautySaloon.Controllers
     {
         private readonly AppDbContext _context;
 
-        
         public PersonelController(AppDbContext context)
         {
             _context = context;
         }
 
-       
         public async Task<IActionResult> Index()
         {
-            
             var personeller = await _context.Personeller.ToListAsync();
-            return View(personeller); 
+            return View(personeller);
         }
-
 
         public IActionResult Create()
         {
-            
-            var personelListesi = _context.Personeller
-                .Where(p => p.Durum == true) 
-                .Select(p => new SelectListItem
-                {
-                    Value = p.Id.ToString(),
-                    Text = $"{p.Ad} {p.Soyad}" 
-                }).ToList();
-
-            
-            ViewData["PersonelId"] = new SelectList(personelListesi, "Value", "Text");
-
             return View();
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Personel personel)
         {
-
-            _context.Add(personel);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
-
-
+            if (ModelState.IsValid)
+            {
+                _context.Add(personel);
+                _context.SaveChanges();
+                TempData["msj"] = "Personel başarıyla eklendi.";
+                return RedirectToAction(nameof(Index));
+            }
+            TempData["msj"] = "Hata! Personel eklenemedi.";
+            return View(personel);
         }
 
         public IActionResult PersonelDetay(int? id)
         {
-
             if (id is null)
             {
-                TempData["msj"] = "Lütfen verileri düzgün giriniz.";
+                TempData["msj"] = "Lütfen geçerli bir personel seçin.";
                 return RedirectToAction("Index");
             }
 
-            var personel = _context.Personeller.FirstOrDefault(i => i.Id == id);
-
+            var personel = _context.Personeller.FirstOrDefault(p => p.Id == id);
             if (personel == null)
             {
                 TempData["msj"] = "Personel bulunamadı.";
@@ -76,78 +58,48 @@ namespace ZeynepBeautySaloon.Controllers
             return View(personel);
         }
 
-
-        private bool PersonelExists(int id)
-        {
-            return _context.Personeller.Any(e => e.Id == id);
-        }
-
-
-        
-
-
-       
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
-            
             var personel = await _context.Personeller.FindAsync(id);
-
-           
             if (personel == null) return NotFound();
 
-           
-            ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", personel.Id);
-
-            
             return View(personel);
         }
 
-        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Personel personel)
         {
-          
-            if (id != personel.Id)
-                return NotFound();
+            if (id != personel.Id) return NotFound();
 
-           
             if (ModelState.IsValid)
             {
                 try
                 {
-                    
                     _context.Update(personel);
                     await _context.SaveChangesAsync();
+                    TempData["msj"] = "Personel başarıyla güncellendi.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    
-                    if (!PersonelExists(personel.Id))
-                        return NotFound();
-                    else
-                        throw;
+                    if (!PersonelExists(personel.Id)) return NotFound();
+                    throw;
                 }
-                
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", personel.Id);
-
+            TempData["msj"] = "Hata! Güncelleme yapılamadı.";
             return View(personel);
         }
 
-
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int? id)
         {
-            var personel = _context.Personeller.FirstOrDefault(i => i.Id == id);
+            if (id == null) return NotFound();
 
-            if (personel == null)
-            {
-                return NotFound();
-            }
+            var personel = _context.Personeller.Find(id);
+            if (personel == null) return NotFound();
 
             return View(personel);
         }
@@ -157,16 +109,22 @@ namespace ZeynepBeautySaloon.Controllers
         public IActionResult DeleteConfirmed(int id)
         {
             var personel = _context.Personeller.Find(id);
-
             if (personel != null)
             {
                 _context.Personeller.Remove(personel);
                 _context.SaveChanges();
+                TempData["msj"] = "Personel başarıyla silindi.";
             }
-
+            else
+            {
+                TempData["msj"] = "Silme işlemi başarısız.";
+            }
             return RedirectToAction(nameof(Index));
         }
 
-
+        private bool PersonelExists(int id)
+        {
+            return _context.Personeller.Any(e => e.Id == id);
+        }
     }
 }

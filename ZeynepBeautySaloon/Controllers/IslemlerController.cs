@@ -1,148 +1,134 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc;
-using ZeynepBeautySaloon.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using ZeynepBeautySaloon.Models;
 
-public class IslemlerController : Controller
+namespace ZeynepBeautySaloon.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public IslemlerController(AppDbContext context)
+    public class IslemlerController : Controller
     {
-        _context = context;
-    }
+        private readonly AppDbContext _context;
 
-    public IActionResult Index()
-    {
-        var islemler = _context.Islemler.Include(i => i.Personel).ToList();
-        return View(islemler);
-    }
-
-    public IActionResult Create()
-    {
-        var personelListesi = _context.Personeller
-            .Where(p => p.Durum == true) 
-            .Select(p => new SelectListItem
-            {
-                Value = p.Id.ToString(),
-                Text = $"{p.Ad} {p.Soyad}" 
-            }).ToList();
-
-        ViewData["PersonelId"] = new SelectList(personelListesi, "Value", "Text");
-
-        return View();
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult Create(Islemler islemler)
-    {
-
-        _context.Add(islemler);
-        _context.SaveChanges();
-        return RedirectToAction(nameof(Index));
-
-
-    }
-
-
-    public IActionResult IslemDetay(int? id)
-    {
-        if (id is null)
+        public IslemlerController(AppDbContext context)
         {
-            TempData["msj"] = "lütfen dataları düzgün giriniz";
-            return RedirectToAction("index");
+            _context = context;
         }
-        var islem = _context.Islemler.Include(i => i.Personel).FirstOrDefault(i => i.Id == id);
-        if (islem is null)
+
+        public IActionResult Index()
         {
-            TempData["msj"] = "islem bulunamadı";
-            return RedirectToAction("index");
+            var islemler = _context.Islemler.Include(i => i.Personel).ToList();
+            return View(islemler);
         }
-        return View();
-    }
 
-
-
-
-    private bool IslemExists(int id)
-    {
-        return _context.Islemler.Any(e => e.Id == id);
-    }
-
-
-
-
-    public async Task<IActionResult> Edit(int? id)
-    {
-
-        if (id == null) return NotFound();
-
-        var islem = await _context.Islemler.FindAsync(id);
-        if (islem == null) return NotFound();
-
-        ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", islem.PersonelId);
-
-        return View(islem);
-    }
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, Islemler islem)
-    {
-
-        if (id != islem.Id)
-            return NotFound();
-
-        if (ModelState.IsValid)
+        public IActionResult Create()
         {
-            try
+            ViewData["PersonelId"] = new SelectList(
+                _context.Personeller.Where(p => p.Durum).ToList(),
+                "Id",
+                "Ad"
+            );
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Islemler islemler)
+        {
+            if (ModelState.IsValid)
             {
-                _context.Update(islem);
-                await _context.SaveChangesAsync();
+                _context.Add(islemler);
+                _context.SaveChanges();
+                TempData["msj"] = "İşlem başarıyla eklendi.";
+                return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateConcurrencyException)
+            TempData["msj"] = "Hata! İşlem eklenemedi.";
+            return View(islemler);
+        }
+
+        public IActionResult IslemDetay(int? id)
+        {
+            if (id == null)
             {
-                if (!IslemExists(islem.Id))
-                    return NotFound();
-                else
+                TempData["msj"] = "Lütfen geçerli bir işlem seçin.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var islem = _context.Islemler.Include(i => i.Personel).FirstOrDefault(i => i.Id == id);
+            if (islem == null)
+            {
+                TempData["msj"] = "İşlem bulunamadı.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(islem);
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var islem = await _context.Islemler.FindAsync(id);
+            if (islem == null) return NotFound();
+
+            ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", islem.PersonelId);
+            return View(islem);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Islemler islem)
+        {
+            if (id != islem.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(islem);
+                    await _context.SaveChangesAsync();
+                    TempData["msj"] = "İşlem başarıyla güncellendi.";
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!IslemExists(islem.Id)) return NotFound();
                     throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+
+            TempData["msj"] = "Hata! Güncelleme yapılamadı.";
+            return View(islem);
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var islem = _context.Islemler.Include(i => i.Personel).FirstOrDefault(i => i.Id == id);
+            if (islem == null) return NotFound();
+
+            return View(islem);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var islem = _context.Islemler.Find(id);
+            if (islem != null)
+            {
+                _context.Islemler.Remove(islem);
+                _context.SaveChanges();
+                TempData["msj"] = "İşlem başarıyla silindi.";
+            }
+            else
+            {
+                TempData["msj"] = "Silme işlemi başarısız.";
             }
             return RedirectToAction(nameof(Index));
         }
 
-        ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", islem.PersonelId);
-
-        return View(islem);
-    }
-
-
-    public IActionResult Delete(int id)
-    {
-        var islem = _context.Islemler.Include(i => i.Personel).FirstOrDefault(i => i.Id == id);
-
-        if (islem == null)
+        private bool IslemExists(int id)
         {
-            return NotFound();
+            return _context.Islemler.Any(e => e.Id == id);
         }
-
-        return View(islem);
     }
-
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public IActionResult DeleteConfirmed(int id)
-    {
-        var islem = _context.Islemler.Find(id);
-
-        if (islem != null)
-        {
-            _context.Islemler.Remove(islem);
-            _context.SaveChanges();
-        }
-
-        return RedirectToAction(nameof(Index));
-    }
-
 }

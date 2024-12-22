@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ZeynepBeautySaloon.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241222091332_GuncelTablolar")]
+    partial class GuncelTablolar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,23 +105,14 @@ namespace ZeynepBeautySaloon.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("OnayDurumu")
-                        .HasColumnType("bit");
-
                     b.Property<int>("PersonelId")
                         .HasColumnType("int");
 
                     b.Property<TimeSpan>("Saat")
                         .HasColumnType("time");
 
-                    b.Property<TimeSpan>("Sure")
-                        .HasColumnType("time");
-
                     b.Property<DateTime>("Tarih")
                         .HasColumnType("datetime2");
-
-                    b.Property<decimal>("Ucret")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int?>("UyeId")
                         .HasColumnType("int");

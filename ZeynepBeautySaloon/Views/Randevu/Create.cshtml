@@ -1,0 +1,59 @@
+﻿@model ZeynepBeautySaloon.Models.Randevu
+
+@{
+    var userName = User.Identity.IsAuthenticated ? User.Identity.Name : null;
+}
+
+<h2>Randevu Talebi Oluştur</h2>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <p><strong>Lütfen giriş yapın veya üye olun!</strong></p>
+    <p>
+        Randevu talebi oluşturabilmek için giriş yapmalısınız.
+        <a href="@Url.Action("Login", "Uye")" class="btn btn-primary">Giriş Yap</a> veya
+        <a href="@Url.Action("Register", "Uye")" class="btn btn-secondary">Üye Ol</a>
+    </p>
+}
+else
+{
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label for="Tarih">Randevu Tarihi</label>
+            <input type="date" asp-for="Tarih" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="Saat">Randevu Saati</label>
+            <input type="time" asp-for="Saat" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="MusteriAdi">Müşteri Adı</label>
+            <input type="text" asp-for="MusteriAdi" class="form-control" value="@userName" readonly required />
+        </div>
+        <div class="form-group">
+            <label for="MusteriTelefon">Telefon</label>
+            <input type="tel" asp-for="MusteriTelefon" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="PersonelId">Personel Seç</label>
+            <select asp-for="PersonelId" class="form-control">
+                @foreach (var personel in ViewBag.PersonelListesi)
+                {
+                    <option value="@personel.Id">@personel.Ad</option>
+                }
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="IslemId">İşlem Seç</label>
+            <select asp-for="IslemId" class="form-control">
+                @foreach (var islem in ViewBag.IslemListesi)
+                {
+                    <option value="@islem.Id">@islem.IslemAdi</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Randevu Oluştur</button>
+        <a href="@Url.Action("List", "Randevu")" class="btn btn-success">Randevularımı Görüntüle</a>
+
+    </form>
+}

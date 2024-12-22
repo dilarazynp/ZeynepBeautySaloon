@@ -1,47 +1,84 @@
-﻿@model ZeynepBeautySaloon.Models.Personel
+﻿@model ZeynepBeautySaloon.Models.Randevu
 
-<h4>Personel</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Ad" class="control-label"></label>
-                <input asp-for="Ad" class="form-control" />
-                <span asp-validation-for="Ad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Soyad" class="control-label"></label>
-                <input asp-for="Soyad" class="form-control" />
-                <span asp-validation-for="Soyad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Uzmanlik" class="control-label"></label>
-                <input asp-for="Uzmanlik" class="form-control" />
-                <span asp-validation-for="Uzmanlik" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Durum" /> @Html.DisplayNameFor(model => model.Durum)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="FotografUrl" class="control-label"></label>
-                <input asp-for="FotografUrl" class="form-control" />
-                <span asp-validation-for="FotografUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+@{
+    ViewData["Title"] = "Randevu Oluştur";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="PersonelId">Personel Seçin:</label>
+        <select asp-for="PersonelId" class="form-control" asp-items="@(new SelectList(ViewBag.PersonelListesi, "Id", "AdSoyad"))">
+            <option value="">Personel Seçin</option>
+        </select>
+        <span asp-validation-for="PersonelId" class="text-danger"></span>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="form-group">
+        <label for="Tarih">Randevu Tarihi:</label>
+        <input type="date" asp-for="Tarih" class="form-control" />
+        <span asp-validation-for="Tarih" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Saat">Randevu Saati:</label>
+        <input type="time" asp-for="Saat" class="form-control" />
+        <span asp-validation-for="Saat" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="IslemId">İşlem Seçin:</label>
+        <select asp-for="IslemId" class="form-control" asp-items="@(new SelectList(ViewBag.IslemListesi, "Id", "IslemAdi"))">
+            <option value="">İşlem Seçin</option>
+        </select>
+        <span asp-validation-for="IslemId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Ucret">İşlem Ücreti:</label>
+        <input type="number" asp-for="Ucret" class="form-control" step="0.01" min="0" />
+        <span asp-validation-for="Ucret" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Sure">İşlem Süresi:</label>
+        <input type="number" asp-for="Sure" class="form-control" />
+        <span asp-validation-for="Sure" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Randevu Oluştur</button>
+</form>
+
+<div id="errorMessage" style="display:none; color:red;"></div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function () {
+            // Personel ve tarih seçimi sonrası kontrol
+            $('form').on('change', '#PersonelId, #Tarih, #Saat', function () {
+                var personelId = $('#PersonelId').val();
+                var tarih = $('#Tarih').val();
+                var saat = $('#Saat').val();
+                if (personelId && tarih && saat) {
+                    checkIfAvailable(personelId, tarih, saat);
+                }
+            });
+
+            function checkIfAvailable(personelId, tarih, saat) {
+                $.ajax({
+                    url: '@Url.Action("CheckAvailability", "Randevu")',
+                    type: 'GET',
+                    data: { personelId: personelId, tarih: tarih, saat: saat },
+                    success: function (data) {
+                        if (data.isAvailable) {
+                            $('#errorMessage').hide();
+                        } else {
+                            $('#errorMessage').text("Bu zaman diliminde personeliniz başka bir randevu aldı.").show();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 }

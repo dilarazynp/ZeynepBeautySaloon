@@ -1,45 +1,48 @@
 ﻿@model IEnumerable<ZeynepBeautySaloon.Models.Islemler>
 
-<h1>İşlemler</h1>
+@{
+    ViewData["Title"] = "İşlemler";
+}
+
+<h2>İşlemler</h2>
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Yeni İşlem Ekle</a>
+    </p>
+}
 
 <table class="table">
     <thead>
         <tr>
-            <th>ID</th>
+            <th>#</th>
             <th>İşlem Adı</th>
-            <th>Süre</th>
-            <th>Ücret</th>
             <th>Personel</th>
-            <th>İşlemler</th>
+            <th>Fiyat</th>
+            <th>Süre</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>İşlemler</th>
+            }
         </tr>
     </thead>
     <tbody>
-        @if (Model != null && Model.Any())
-        {
-            foreach (var islem in Model)
-            {
-                <tr>
-                    <td>@islem.Id</td>
-                    <td>@islem.IslemAdi</td>
-                    <td>@islem.Sure dakika</td>
-                    <td>@islem.Ucret ₺</td>
-                    <td>@islem.Personel?.Ad</td> <!-- Personel null olabilir, ona dikkat et -->
-                    <td>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <a href="@Url.Action("Create", "Islemler")" class="btn btn-primary">Yeni İşlem Ekle</a>
-                            <a href="@Url.Action("Edit", "Islemler", new { id = islem.Id })" class="btn btn-warning">Düzenle</a>
-                            <a href="@Url.Action("Delete", "Islemler", new { id = islem.Id })" class="btn btn-danger">Sil</a>
-                            <a href="@Url.Action("IslemDetay", "Islemler", new { id = islem.Id })" class="btn btn-info">IslemDetay</a>
-                        }
-                    </td>
-                </tr>
-            }
-        }
-        else
+        @foreach (var item in Model)
         {
             <tr>
-                <td colspan="6">Herhangi bir işlem bulunmamaktadır.</td>
+                <td>@item.Id</td>
+                <td>@item.IslemAdi</td>
+                <td>@item.Personel?.Ad</td>
+                <td>@item.Ucret</td>
+                <td>@item.Sure</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Düzenle</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Sil</a>
+                    </td>
+                }
             </tr>
         }
     </tbody>

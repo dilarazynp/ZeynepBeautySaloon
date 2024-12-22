@@ -5,7 +5,7 @@ namespace ZeynepBeautySaloon.Models
 {
     public class Islemler
     {
-        [Key] 
+        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "İşlem adı gereklidir.")]
@@ -14,7 +14,7 @@ namespace ZeynepBeautySaloon.Models
 
         [Required(ErrorMessage = "Süre gereklidir.")]
         [Range(1, 480, ErrorMessage = "Süre 1 ile 480 dakika arasında olmalıdır.")]
-        public int Sure { get; set; } 
+        public int Sure { get; set; }
 
         [Required(ErrorMessage = "Ücret gereklidir.")]
         [Range(1, 10000, ErrorMessage = "Ücret 1 ile 10,000 arasında olmalıdır.")]
@@ -26,5 +26,6 @@ namespace ZeynepBeautySaloon.Models
 
         public virtual Personel? Personel { get; set; }
 
+        public virtual ICollection<Randevu>? Randevular { get; set; }
     }
 }

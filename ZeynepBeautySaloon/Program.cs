@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using ZeynepBeautySaloon.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,12 +19,14 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true; // GDPR uyumluluðu için gerekli
 });
 
-// Add authentication services
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
         options.LoginPath = "/Uye/Login";
         options.LogoutPath = "/Uye/Logout";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
+        options.Cookie.IsEssential = true;
     });
 
 var app = builder.Build();
@@ -47,11 +46,6 @@ app.UseSession();
 app.UseRouting();
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization();
-
-app.MapControllers();
-
-// Yetkisiz giriþler için yönlendirme
-app.UseStatusCodePagesWithRedirects("/Account/Login?returnUrl=/Admin");
 
 // Varsayýlan rota
 app.MapControllerRoute(
