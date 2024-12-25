@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ZeynepBeautySaloon.Models;
+using Microsoft.AspNetCore.Authorization;
+using ZeynepBeautySaloon.Data;
 
 namespace ZeynepBeautySaloon.Controllers
 {
@@ -14,37 +16,56 @@ namespace ZeynepBeautySaloon.Controllers
             _context = context;
         }
 
+        [Authorize(Roles = "Admin,User")]
         public IActionResult Index()
         {
             var islemler = _context.Islemler.Include(i => i.Personel).ToList();
             return View(islemler);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
+            // Personel listesini dropdown'a doldur, durumu uygun olanları getir
             ViewData["PersonelId"] = new SelectList(
-                _context.Personeller.Where(p => p.Durum).ToList(),
+                _context.Personeller.Where(p => p.MusaitlikDurumu).ToList(),
                 "Id",
-                "Ad"
+                "Ad" // Personel'in adı ve soyadı property'si varsa "AdSoyad" yapabilirsiniz
             );
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Islemler islemler)
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create(Islemler islem)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(islemler);
+                // İşlem oluşturulurken, seçilen PersonelId'ye göre Personel nesnesini ata
+                if (islem.PersonelId.HasValue)
+                {
+                    islem.Personel = _context.Personeller.FirstOrDefault(p => p.Id == islem.PersonelId.Value);
+                }
+
+                _context.Add(islem);
                 _context.SaveChanges();
                 TempData["msj"] = "İşlem başarıyla eklendi.";
                 return RedirectToAction(nameof(Index));
             }
+
+            // Hata durumunda Personel listesini tekrar doldur
+            ViewData["PersonelId"] = new SelectList(
+                _context.Personeller.Where(p => p.MusaitlikDurumu).ToList(),
+                "Id",
+                "Ad",
+                islem.PersonelId
+            );
             TempData["msj"] = "Hata! İşlem eklenemedi.";
-            return View(islemler);
+            return View(islem);
         }
 
+        [Authorize(Roles = "Admin,User")]
         public IActionResult IslemDetay(int? id)
         {
             if (id == null)
@@ -63,6 +84,7 @@ namespace ZeynepBeautySaloon.Controllers
             return View(islem);
         }
 
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -70,12 +92,13 @@ namespace ZeynepBeautySaloon.Controllers
             var islem = await _context.Islemler.FindAsync(id);
             if (islem == null) return NotFound();
 
-            ViewData["PersonelId"] = new SelectList(_context.Personeller, "Id", "Ad", islem.PersonelId);
+            ViewData["PersonelId"] = new SelectList(_context.Personeller.Where(p => p.MusaitlikDurumu), "Id", "Ad", islem.PersonelId);
             return View(islem);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, Islemler islem)
         {
             if (id != islem.Id) return NotFound();
@@ -84,6 +107,16 @@ namespace ZeynepBeautySaloon.Controllers
             {
                 try
                 {
+                    // İşlem güncellenirken, Personel nesnesini de güncelle
+                    if (islem.PersonelId.HasValue)
+                    {
+                        islem.Personel = _context.Personeller.FirstOrDefault(p => p.Id == islem.PersonelId.Value);
+                    }
+                    else
+                    {
+                        islem.Personel = null; // Personel atanmamışsa, Personel nesnesini null yap
+                    }
+
                     _context.Update(islem);
                     await _context.SaveChangesAsync();
                     TempData["msj"] = "İşlem başarıyla güncellendi.";
@@ -97,9 +130,11 @@ namespace ZeynepBeautySaloon.Controllers
             }
 
             TempData["msj"] = "Hata! Güncelleme yapılamadı.";
+            ViewData["PersonelId"] = new SelectList(_context.Personeller.Where(p => p.MusaitlikDurumu), "Id", "Ad", islem.PersonelId);
             return View(islem);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
             var islem = _context.Islemler.Include(i => i.Personel).FirstOrDefault(i => i.Id == id);
@@ -110,6 +145,7 @@ namespace ZeynepBeautySaloon.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteConfirmed(int id)
         {
             var islem = _context.Islemler.Find(id);

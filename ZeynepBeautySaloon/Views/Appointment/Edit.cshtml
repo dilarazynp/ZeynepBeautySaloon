@@ -1,0 +1,113 @@
+﻿@model ZeynepBeautySaloon.Models.Appointment
+
+@{
+    ViewData["Title"] = "Randevu Düzenle";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Tarih" class="control-label"></label>
+                <input asp-for="Tarih" type="date" class="form-control" />
+                <span asp-validation-for="Tarih" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Saat" class="control-label"></label>
+                <input asp-for="Saat" type="time" class="form-control" />
+                <span asp-validation-for="Saat" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UyeId" class="control-label"></label>
+                <select asp-for="UyeId" class="form-control" asp-items="ViewBag.UyeId"></select>
+                <span asp-validation-for="UyeId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PersonelId" class="control-label"></label>
+                <select asp-for="PersonelId" class="form-control" asp-items="ViewBag.PersonelId">
+                    <option value="">Personel Seçiniz</option>
+                </select>
+                <span asp-validation-for="PersonelId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IslemId" class="control-label"></label>
+                <select asp-for="IslemId" class="form-control" asp-items="ViewBag.IslemId">
+                    <option value="">İşlem Seçiniz</option>
+                </select>
+                <span asp-validation-for="IslemId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ucret" class="control-label"></label>
+                <input asp-for="Ucret" class="form-control" readonly />
+                <span asp-validation-for="Ucret" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="OnayDurumu" /> @Html.DisplayNameFor(model => model.OnayDurumu)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Listeye Geri Dön</a>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#PersonelId').change(function () {
+                var personelId = $(this).val();
+                if (personelId) {
+                    $.ajax({
+                        url: '/Appointment/CalisandanServisleriAl',
+                        type: 'GET',
+                        data: { calisanId: personelId },
+                        success: function (data) {
+                            $('#IslemId').empty();
+                            $('#IslemId').append($('<option>').text('Seçiniz').val(''));
+                            $.each(data, function (i, item) {
+                                $('#IslemId').append($('<option>').text(item.islemAdi).val(item.id));
+                            });
+                            $('#Ucret').val('');
+                        }
+                    });
+                } else {
+                    $('#IslemId').empty();
+                    $('#IslemId').append($('<option>').text('Seçiniz').val(''));
+                    $('#Ucret').val('');
+                }
+            });
+
+            $('#IslemId').change(function () {
+                var islemId = $(this).val();
+                if (islemId) {
+                    $.ajax({
+                        url: '/Islemler/IslemDetay',
+                        type: 'GET',
+                        data: { id: islemId },
+                        success: function (islem) {
+                            if (islem) {
+                                $('#Ucret').val(islem.ucret);
+                            }
+                        }
+                    });
+                } else {
+                    $('#Ucret').val('');
+                }
+            });
+        });
+    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

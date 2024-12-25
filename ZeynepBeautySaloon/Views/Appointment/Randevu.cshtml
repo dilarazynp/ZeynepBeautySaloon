@@ -1,0 +1,112 @@
+﻿@{
+    ViewData["Title"] = "Randevu Al";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["msj"] != null)
+{
+    <div class="alert alert-info">@TempData["msj"]</div>
+}
+
+<form asp-action="RandevuAl" method="post">
+    <div class="form-group">
+        <label for="PersonelId">Personel Seçiniz:</label>
+        <select id="PersonelId" name="PersonelId" class="form-control" asp-items="ViewBag.Personeller">
+            <option value="">Seçiniz</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="IslemId">İşlem Seçiniz:</label>
+        <select id="IslemId" name="IslemId" class="form-control">
+            <option value="">Seçiniz</option>
+        </select>
+        <span id="ucret"></span>
+    </div>
+    <div class="form-group">
+        <label for="Tarih">Tarih Seçiniz:</label>
+        <input type="date" id="Tarih" name="Tarih" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="Saat">Saat Seçiniz:</label>
+        <select id="Saat" name="Saat" class="form-control">
+            <option value="">Seçiniz</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Randevu Al</button>
+</form>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#PersonelId').change(function () {
+                var personelId = $(this).val();
+                if (personelId) {
+                    $.ajax({
+                        url: '/Appointment/CalisandanServisleriAl',
+                        type: 'GET',
+                        data: { calisanId: personelId },
+                        success: function (data) {
+                            $('#IslemId').empty();
+                            $('#IslemId').append($('<option>').text('Seçiniz').val(''));
+                            $.each(data, function (i, item) {
+                                $('#IslemId').append($('<option>').text(item.islemAdi).val(item.id));
+                            });
+                            $('#ucret').text('');
+                        }
+                    });
+                } else {
+                    $('#IslemId').empty();
+                    $('#IslemId').append($('<option>').text('Seçiniz').val(''));
+                    $('#ucret').text('');
+                }
+            });
+
+            $('#IslemId').change(function () {
+                var personelId = $('#PersonelId').val();
+                var islemId = $(this).val();
+                if (personelId && islemId) {
+                    $.ajax({
+                        url: '/Appointment/CalisandanServisleriAl',
+                        type: 'GET',
+                        data: { calisanId: personelId },
+                        success: function (data) {
+                            var selectedIslem = data.find(function (item) {
+                                return item.id == islemId;
+                            });
+                            if (selectedIslem) {
+                                $('#ucret').text('Ücret: ' + selectedIslem.ucret + ' TL');
+                            } else {
+                                $('#ucret').text('');
+                            }
+                        }
+                    });
+                } else {
+                    $('#ucret').text('');
+                }
+            });
+
+            $('#Tarih').change(function () {
+                var personelId = $('#PersonelId').val();
+                var tarih = $(this).val();
+                if (personelId && tarih) {
+                    $.ajax({
+                        url: '/Appointment/RandevuSaatleriniAl',
+                        type: 'GET',
+                        data: { calisanId: personelId, tarih: tarih },
+                        success: function (data) {
+                            $('#Saat').empty();
+                            $('#Saat').append($('<option>').text('Seçiniz').val(''));
+                            $.each(data, function (i, item) {
+                                $('#Saat').append($('<option>').text(item).val(item));
+                            });
+                        }
+                    });
+                } else {
+                    $('#Saat').empty();
+                    $('#Saat').append($('<option>').text('Seçiniz').val(''));
+                }
+            });
+        });
+    </script>
+}

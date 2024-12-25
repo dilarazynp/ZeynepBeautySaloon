@@ -1,48 +1,74 @@
 ﻿@model IEnumerable<ZeynepBeautySaloon.Models.Islemler>
 
 @{
-    ViewData["Title"] = "İşlemler";
+    ViewData["Title"] = "İşlem Listesi";
 }
 
-<h2>İşlemler</h2>
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["msj"] != null)
+{
+    <div class="alert alert-info">@TempData["msj"]</div>
+}
 
 @if (User.IsInRole("Admin"))
 {
     <p>
-        <a asp-action="Create" class="btn btn-primary">Yeni İşlem Ekle</a>
+        <a asp-action="Create" class="btn btn-success">Yeni İşlem Ekle</a>
     </p>
 }
 
 <table class="table">
     <thead>
         <tr>
-            <th>#</th>
-            <th>İşlem Adı</th>
-            <th>Personel</th>
-            <th>Fiyat</th>
-            <th>Süre</th>
-            @if (User.IsInRole("Admin"))
-            {
-                <th>İşlemler</th>
-            }
+            <th>
+                @Html.DisplayNameFor(model => model.IslemAdi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Sure)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ucret)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Personel)
+            </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Id</td>
-                <td>@item.IslemAdi</td>
-                <td>@item.Personel?.Ad</td>
-                <td>@item.Ucret</td>
-                <td>@item.Sure</td>
-                @if (User.IsInRole("Admin"))
-                {
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Düzenle</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Sil</a>
-                    </td>
-                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.IslemAdi)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Sure)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ucret)
+                </td>
+                <td>
+                    @if (item.Personel != null)
+                    {
+                        @Html.DisplayFor(modelItem => item.Personel.Ad)
+                    }
+                    else
+                    {
+                        <span>Atanmamış</span>
+                    }
+                </td>
+                <td>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
+                        <text> | </text>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Sil</a>
+                        <text> | </text>
+                    }
+                    <a asp-action="IslemDetay" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
+                </td>
             </tr>
         }
     </tbody>

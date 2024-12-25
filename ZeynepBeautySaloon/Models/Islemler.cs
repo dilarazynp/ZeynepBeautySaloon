@@ -5,12 +5,11 @@ namespace ZeynepBeautySaloon.Models
 {
     public class Islemler
     {
-        [Key]
         public int Id { get; set; }
 
         [Required(ErrorMessage = "İşlem adı gereklidir.")]
         [StringLength(100, ErrorMessage = "İşlem adı en fazla 100 karakter olabilir.")]
-        public required string IslemAdi { get; set; }
+        public string IslemAdi { get; set; }
 
         [Required(ErrorMessage = "Süre gereklidir.")]
         [Range(1, 480, ErrorMessage = "Süre 1 ile 480 dakika arasında olmalıdır.")]
@@ -21,11 +20,10 @@ namespace ZeynepBeautySaloon.Models
         public decimal Ucret { get; set; }
 
         [ForeignKey("Personel")]
-        [Required(ErrorMessage = "Personel seçimi gereklidir.")]
-        public int PersonelId { get; set; }
+        public int? PersonelId { get; set; } // Nullable yapılabilir, işlem oluşturulurken personel atanmamış olabilir
 
-        public virtual Personel? Personel { get; set; }
+        public virtual Personel? Personel { get; set; } // İşlemi yapan personel
 
-        public virtual ICollection<Randevu>? Randevular { get; set; }
+        public virtual ICollection<Appointment>? Appointments { get; set; } // İşlemin yapıldığı randevular, nullable
     }
 }

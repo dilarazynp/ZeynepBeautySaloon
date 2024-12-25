@@ -5,14 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using ZeynepBeautySaloon.Data;
 
 #nullable disable
 
 namespace ZeynepBeautySaloon.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241222091332_GuncelTablolar")]
-    partial class GuncelTablolar
+    [Migration("20241225020053_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +24,45 @@ namespace ZeynepBeautySaloon.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("ZeynepBeautySaloon.Models.Appointment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IslemId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("OnayDurumu")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<int>("PersonelId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("Saat")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("Tarih")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UyeId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IslemId");
+
+                    b.HasIndex("PersonelId");
+
+                    b.HasIndex("UyeId");
+
+                    b.ToTable("Appointments");
+                });
 
             modelBuilder.Entity("ZeynepBeautySaloon.Models.Islemler", b =>
                 {
@@ -69,7 +109,6 @@ namespace ZeynepBeautySaloon.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FotografUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Soyad")
@@ -83,49 +122,6 @@ namespace ZeynepBeautySaloon.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Personeller");
-                });
-
-            modelBuilder.Entity("ZeynepBeautySaloon.Models.Randevu", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("IslemId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MusteriAdi")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("MusteriTelefon")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PersonelId")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("Saat")
-                        .HasColumnType("time");
-
-                    b.Property<DateTime>("Tarih")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("UyeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IslemId");
-
-                    b.HasIndex("PersonelId");
-
-                    b.HasIndex("UyeId");
-
-                    b.ToTable("Randevular");
                 });
 
             modelBuilder.Entity("ZeynepBeautySaloon.Models.Uye", b =>
@@ -176,6 +172,33 @@ namespace ZeynepBeautySaloon.Migrations
                     b.ToTable("Uyeler");
                 });
 
+            modelBuilder.Entity("ZeynepBeautySaloon.Models.Appointment", b =>
+                {
+                    b.HasOne("ZeynepBeautySaloon.Models.Islemler", "Islem")
+                        .WithMany("Appointments")
+                        .HasForeignKey("IslemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ZeynepBeautySaloon.Models.Personel", "Personel")
+                        .WithMany("Appointments")
+                        .HasForeignKey("PersonelId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ZeynepBeautySaloon.Models.Uye", "Uye")
+                        .WithMany("Appointments")
+                        .HasForeignKey("UyeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Islem");
+
+                    b.Navigation("Personel");
+
+                    b.Navigation("Uye");
+                });
+
             modelBuilder.Entity("ZeynepBeautySaloon.Models.Islemler", b =>
                 {
                     b.HasOne("ZeynepBeautySaloon.Models.Personel", "Personel")
@@ -187,44 +210,21 @@ namespace ZeynepBeautySaloon.Migrations
                     b.Navigation("Personel");
                 });
 
-            modelBuilder.Entity("ZeynepBeautySaloon.Models.Randevu", b =>
-                {
-                    b.HasOne("ZeynepBeautySaloon.Models.Islemler", "Islem")
-                        .WithMany("Randevular")
-                        .HasForeignKey("IslemId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ZeynepBeautySaloon.Models.Personel", "Personel")
-                        .WithMany("Randevular")
-                        .HasForeignKey("PersonelId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ZeynepBeautySaloon.Models.Uye", null)
-                        .WithMany("Randevular")
-                        .HasForeignKey("UyeId");
-
-                    b.Navigation("Islem");
-
-                    b.Navigation("Personel");
-                });
-
             modelBuilder.Entity("ZeynepBeautySaloon.Models.Islemler", b =>
                 {
-                    b.Navigation("Randevular");
+                    b.Navigation("Appointments");
                 });
 
             modelBuilder.Entity("ZeynepBeautySaloon.Models.Personel", b =>
                 {
-                    b.Navigation("Islemler");
+                    b.Navigation("Appointments");
 
-                    b.Navigation("Randevular");
+                    b.Navigation("Islemler");
                 });
 
             modelBuilder.Entity("ZeynepBeautySaloon.Models.Uye", b =>
                 {
-                    b.Navigation("Randevular");
+                    b.Navigation("Appointments");
                 });
 #pragma warning restore 612, 618
         }

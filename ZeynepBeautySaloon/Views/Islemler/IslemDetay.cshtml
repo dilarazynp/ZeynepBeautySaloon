@@ -1,37 +1,52 @@
 ﻿@model ZeynepBeautySaloon.Models.Islemler
 
+@{
+    ViewData["Title"] = "İşlem Detayları";
+}
+
+<h2>@ViewData["Title"]</h2>
+
 <div>
-    <h4>Islemler</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.IslemAdi)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.IslemAdi)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Sure)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Sure)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Ucret)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Ucret)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Personel)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Personel.Id)
+        <dd class="col-sm-10">
+            @if (Model.Personel != null)
+            {
+                @Html.DisplayFor(model => model.Personel.Ad)
+            }
+            else
+            {
+                <span>Atanmamış</span>
+            }
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Düzenle</a>
+        <text> | </text>
+    }
+    <a asp-action="Index">Listeye Geri Dön</a>
 </div>
-

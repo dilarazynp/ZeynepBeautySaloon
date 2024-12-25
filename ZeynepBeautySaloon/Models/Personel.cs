@@ -1,18 +1,25 @@
-﻿namespace ZeynepBeautySaloon.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ZeynepBeautySaloon.Models
 {
     public class Personel
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Ad alanı zorunludur.")]
         public string Ad { get; set; }
+
+        [Required(ErrorMessage = "Soyad alanı zorunludur.")]
         public string Soyad { get; set; }
+
+        [Required(ErrorMessage = "Uzmanlık alanı zorunludur.")]
         public string Uzmanlik { get; set; }
 
-        public bool Durum { get; set; }
-        public string FotografUrl { get; set; }
+        [Required(ErrorMessage = "Müsaitlik durumu zorunludur.")]
+        public bool MusaitlikDurumu { get; set; }
 
-        public virtual ICollection<Islemler>? Islemler { get; set; }
+        public string? FotografUrl { get; set; } // İsteğe bağlı
 
-        public virtual ICollection<Randevu>? Randevular { get; set; }
-
+        public virtual ICollection<Islemler>? Islemler { get; set; } // Personelin yapabildiği işlemler
     }
 }

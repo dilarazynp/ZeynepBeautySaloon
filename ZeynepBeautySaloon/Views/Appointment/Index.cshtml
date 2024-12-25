@@ -1,0 +1,98 @@
+﻿@model IEnumerable<ZeynepBeautySaloon.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Randevular";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (TempData["msj"] != null)
+{
+    <div class="alert alert-info">@TempData["msj"]</div>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success">Yeni Randevu Ekle</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Tarih)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Saat)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Uye)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Islem)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Personel)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Ucret)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OnayDurumu)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tarih)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Saat)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Uye.UserName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Islem.IslemAdi)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Islem.Personel.Ad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ucret)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OnayDurumu)
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
+                        if (!item.OnayDurumu)
+                        {
+                            <form asp-action="Onayla" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-success">Onayla</button>
+                            </form>
+                        }
+                        <form asp-action="IptalEt" asp-route-id="@item.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">İptal Et</button>
+                        </form>
+                    }
+                    else if (item.UyeId.ToString() == Context.Session.GetString("UserId"))
+                    {
+                        <form asp-action="IptalEt" asp-route-id="@item.Id" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-danger">İptal Et</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

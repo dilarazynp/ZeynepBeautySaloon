@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\Images\Arkaplanlar\" />
     <Folder Include="wwwroot\Images\AnaSayfa\" />
   </ItemGroup>

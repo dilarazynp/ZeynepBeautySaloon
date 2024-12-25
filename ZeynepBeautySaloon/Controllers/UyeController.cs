@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using ZeynepBeautySaloon.Models;
-using BCrypt.Net;
+using ZeynepBeautySaloon.Data;
 
 namespace ZeynepBeautySaloon.Controllers
 {
@@ -12,8 +12,10 @@ namespace ZeynepBeautySaloon.Controllers
     {
         private readonly AppDbContext _context;
 
+        // DİKKAT: AdminEmail ve AdminPassword'u Environment Variable yerine veritabanından almanız daha güvenli.
         private readonly string AdminEmail = Environment.GetEnvironmentVariable("AdminEmail") ?? "admin@admin.com";
-        private readonly string AdminPassword = Environment.GetEnvironmentVariable("AdminPassword") ?? BCrypt.Net.BCrypt.HashPassword("sau");
+        // DİKKAT: Güvenlik açığı! Admin şifresini bu şekilde tutmak çok tehlikeli!
+        private readonly string AdminPassword = Environment.GetEnvironmentVariable("AdminPassword") ?? "sau";
 
         public UyeController(AppDbContext context)
         {
@@ -51,8 +53,9 @@ namespace ZeynepBeautySaloon.Controllers
                     return View(uye);
                 }
 
-                uye.PasswordHash = BCrypt.Net.BCrypt.HashPassword(uye.PasswordHash);
-                uye.Rol = "User"; // Yeni üye User olarak atanıyor.
+                // DİKKAT: Şifre artık hash'lenmeden kaydediliyor!
+                // uye.SetPassword(uye.PasswordHash); // Bu satırı kaldırıyoruz
+                uye.Rol = "User";
                 _context.Uyeler.Add(uye);
                 _context.SaveChanges();
 
@@ -66,7 +69,6 @@ namespace ZeynepBeautySaloon.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // Eğer kullanıcı zaten giriş yaptıysa, ana sayfaya yönlendir
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Home");
@@ -78,19 +80,24 @@ namespace ZeynepBeautySaloon.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string Email, string Password)
         {
-            // Admin giriş kontrolü
-            if (Email == AdminEmail && BCrypt.Net.BCrypt.Verify(Password, AdminPassword))
+            // ADMİN GİRİŞİ KONTROLÜ - BAŞLANGIÇ
+            if (Email == AdminEmail)
             {
-                await SignInUser("Admin", "Admin");
-                return RedirectToAction("Index", "Home"); // Admin giriş yaptıysa ana sayfaya yönlendir
+                // DİKKAT: AdminPassword değişkeni, HAM ŞİFREYİ DEĞİL, HASH'LENMİŞ ŞİFREYİ TUTMALI.
+                if (Password == AdminPassword) // Güvenli Olmayan Karşılaştırma!
+                {
+                    await SignInUser(AdminEmail, "Admin");
+                    return RedirectToAction("Index", "Home");
+                }
             }
-
-            // Kullanıcı giriş kontrolü
+            // KULLANICI GİRİŞİ KONTROLÜ - GÜVENLİ DEĞİL!
             var uye = _context.Uyeler.SingleOrDefault(u => u.Email == Email);
-            if (uye != null && BCrypt.Net.BCrypt.Verify(Password, uye.PasswordHash))
+            // DİKKAT: Şifre artık hash'lenmeden, doğrudan karşılaştırılıyor!
+            if (uye != null && uye.Password == Password)
             {
                 await SignInUser(uye.UserName, uye.Rol);
-                return RedirectToAction("Index", "Home"); // Kullanıcı giriş yaptıysa ana sayfaya yönlendir
+                HttpContext.Session.SetString("UserId", uye.Id.ToString());
+                return RedirectToAction("Index", "Home");
             }
 
             ModelState.AddModelError(string.Empty, "E-posta veya şifre hatalı.");
@@ -101,9 +108,9 @@ namespace ZeynepBeautySaloon.Controllers
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            HttpContext.Session.Clear(); // Oturumdaki verileri temizle
-            Response.Cookies.Delete(".AspNetCore.Cookies"); // Çerezleri temizle
-            return RedirectToAction("Index", "Home"); // Ana sayfaya yönlendir
+            HttpContext.Session.Clear();
+            Response.Cookies.Delete(".AspNetCore.Cookies");
+            return RedirectToAction("Index", "Home");
         }
 
         private async Task SignInUser(string userName, string role)
@@ -119,8 +126,8 @@ namespace ZeynepBeautySaloon.Controllers
 
             var authProperties = new AuthenticationProperties
             {
-                IsPersistent = false, // Oturum kalıcı mı? false ise tarayıcı kapandığında sonlanır.
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30) // Çerez süresi
+                IsPersistent = false,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
             };
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, authProperties);

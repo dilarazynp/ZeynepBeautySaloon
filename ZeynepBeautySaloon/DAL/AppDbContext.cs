@@ -1,34 +1,50 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ZeynepBeautySaloon.Models;
 
-public class AppDbContext : DbContext
+namespace ZeynepBeautySaloon.Data
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-    // Tabloya dönüştürülecek model sınıfları
-    public DbSet<Personel> Personeller { get; set; }
-    public DbSet<Uye> Uyeler { get; set; }
-    public DbSet<Islemler> Islemler { get; set; }
-    public DbSet<Randevu> Randevular { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    public class AppDbContext : DbContext
     {
-        base.OnModelCreating(modelBuilder);
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
 
-        modelBuilder.Entity<Islemler>()
-            .Property(i => i.Ucret)
-            .HasColumnType("decimal(18,2)");
+        public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<Islemler> Islemler { get; set; }
+        public DbSet<Personel> Personeller { get; set; }
+        public DbSet<Uye> Uyeler { get; set; }
 
-        modelBuilder.Entity<Randevu>()
-            .HasOne(r => r.Personel)
-            .WithMany(p => p.Randevular)
-            .HasForeignKey(r => r.PersonelId)
-            .OnDelete(DeleteBehavior.Restrict);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.OnayDurumu)
+                .HasDefaultValue(false);
 
-        modelBuilder.Entity<Randevu>()
-            .HasOne(r => r.Islem)
-            .WithMany(i => i.Randevular)
-            .HasForeignKey(r => r.IslemId)
-            .OnDelete(DeleteBehavior.Restrict);
+            // Appointment: Ücret'in varsayılan değeri 0, Islem seçildiğinde güncellenecek
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.Ucret)
+                .HasDefaultValue(0);
+
+            // Islemler: İşlem ile Personel ilişkisi
+            modelBuilder.Entity<Islemler>()
+                .HasOne(i => i.Personel)
+                .WithMany(p => p.Islemler)
+                .HasForeignKey(i => i.PersonelId)
+                .OnDelete(DeleteBehavior.SetNull); // Personel silindiğinde, Islemler.PersonelId null olsun
+
+
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Islem)
+                .WithMany(i => i.Appointments)
+                .HasForeignKey(a => a.IslemId);
+
+            // Appointment: Üye ile ilişki
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Uye)
+                .WithMany(u => u.Appointments)
+                .HasForeignKey(a => a.UyeId);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

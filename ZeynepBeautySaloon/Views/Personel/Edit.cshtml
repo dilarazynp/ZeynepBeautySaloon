@@ -1,6 +1,11 @@
 ﻿@model ZeynepBeautySaloon.Models.Personel
 
-<h4>Personel</h4>
+@{
+    ViewData["Title"] = "Personel Düzenle";
+}
+
+<h2>@ViewData["Title"]</h2>
+
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -24,7 +29,7 @@
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Durum" /> @Html.DisplayNameFor(model => model.Durum)
+                    <input class="form-check-input" asp-for="MusaitlikDurumu" /> @Html.DisplayNameFor(model => model.MusaitlikDurumu)
                 </label>
             </div>
             <div class="form-group">
@@ -33,16 +38,18 @@
                 <span asp-validation-for="FotografUrl" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Kaydet" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Listeye Geri Dön</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

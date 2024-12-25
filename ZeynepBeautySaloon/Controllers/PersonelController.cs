@@ -2,9 +2,12 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ZeynepBeautySaloon.Models;
+using Microsoft.AspNetCore.Authorization;
+using ZeynepBeautySaloon.Data;
 
 namespace ZeynepBeautySaloon.Controllers
 {
+    [Authorize(Roles = "Admin")] // Tüm metodlar için yetkilendirme
     public class PersonelController : Controller
     {
         private readonly AppDbContext _context;
