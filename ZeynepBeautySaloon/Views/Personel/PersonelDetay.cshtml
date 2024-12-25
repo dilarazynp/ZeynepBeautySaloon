@@ -41,7 +41,13 @@
         </dd>
     </dl>
 </div>
+
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Düzenle</a> |
+    @* Sadece Admin rolündeki kullanıcılar "Düzenle" butonunu görebilir *@
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id">Düzenle</a>
+ 
+    }
     <a asp-action="Index">Listeye Geri Dön</a>
 </div>

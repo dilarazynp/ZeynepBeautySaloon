@@ -146,21 +146,31 @@ namespace ZeynepBeautySaloon.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteConfirmed(int id)
         {
-            var islem = _context.Islemler.Find(id);
-            if (islem != null)
+            var islem = _context.Islemler
+                .Include(i => i.Appointments) // Randevuları include et
+                .FirstOrDefault(i => i.Id == id);
+
+            if (islem == null)
             {
-                _context.Islemler.Remove(islem);
-                _context.SaveChanges();
-                TempData["msj"] = "İşlem başarıyla silindi.";
+                TempData["msj"] = "İşlem bulunamadı.";
+                return RedirectToAction(nameof(Index));
             }
-            else
+
+            if (islem.Appointments.Any())
             {
-                TempData["msj"] = "Silme işlemi başarısız.";
+                TempData["msj"] = "Bu işlem silinemez çünkü ilişkili randevuları var.";
+                return RedirectToAction(nameof(Index));
             }
+
+            _context.Islemler.Remove(islem);
+            _context.SaveChanges();
+            TempData["msj"] = "İşlem başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool IslemExists(int id)
         {

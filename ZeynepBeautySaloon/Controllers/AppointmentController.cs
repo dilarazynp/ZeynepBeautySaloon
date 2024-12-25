@@ -47,7 +47,7 @@ namespace ZeynepBeautySaloon.Controllers
         }
 
         
-        [Authorize(Roles = "User")]
+        //[Authorize(Roles = "User")]    değistiriidkk **********
         public IActionResult Randevu()
         {
            

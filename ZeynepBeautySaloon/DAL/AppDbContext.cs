@@ -44,6 +44,18 @@ namespace ZeynepBeautySaloon.Data
                 .WithMany(u => u.Appointments)
                 .HasForeignKey(a => a.UyeId);
 
+            modelBuilder.Entity<Appointment>()
+            .HasOne(a => a.Personel)
+            .WithMany(p => p.Appointments)
+            .HasForeignKey(a => a.PersonelId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Appointment>()
+            .HasOne(r => r.Islem)
+            .WithMany(i => i.Appointments)
+            .HasForeignKey(r => r.IslemId)
+            .OnDelete(DeleteBehavior.Cascade);
+
             base.OnModelCreating(modelBuilder);
         }
     }

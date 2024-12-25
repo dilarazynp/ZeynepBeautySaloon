@@ -11,9 +11,13 @@
     <div class="alert alert-info">@TempData["msj"]</div>
 }
 
-<p>
-    <a asp-action="Create" class="btn btn-success">Yeni Personel Ekle</a>
-</p>
+@if (User.IsInRole("Admin"))
+{
+    <p>
+        <a asp-action="Create" class="btn btn-success">Yeni Personel Ekle</a>
+    </p>
+}
+
 <table class="table">
     <thead>
         <tr>
@@ -49,9 +53,14 @@
                     @Html.DisplayFor(modelItem => item.MusaitlikDurumu)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a> |
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
+                        <text>|</text>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Sil</a>
+                        <text>|</text>
+                    }
                     <a asp-action="PersonelDetay" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Sil</a>
                 </td>
             </tr>
         }

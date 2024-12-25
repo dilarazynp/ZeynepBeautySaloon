@@ -41,7 +41,14 @@
                             <a class="nav-link" asp-area="" asp-controller="Islemler" asp-action="Index">Hizmetler</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Appointment" asp-action="Randevu">Randevu</a>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <a class="nav-link" asp-area="" asp-controller="Appointment" asp-action="Index">Randevu</a>
+                            }
+                            else
+                            {
+                                <a class="nav-link" asp-area="" asp-controller="Appointment" asp-action="Randevu">Randevu</a>
+                            }
                         </li>
                     </ul>
 

@@ -21,5 +21,7 @@ namespace ZeynepBeautySaloon.Models
         public string? FotografUrl { get; set; } // İsteğe bağlı
 
         public virtual ICollection<Islemler>? Islemler { get; set; } // Personelin yapabildiği işlemler
+
+        public virtual ICollection<Appointment>? Appointments { get; set; }
     }
 }

@@ -7,7 +7,7 @@ using ZeynepBeautySaloon.Data;
 
 namespace ZeynepBeautySaloon.Controllers
 {
-    [Authorize(Roles = "Admin")] // Tüm metodlar için yetkilendirme
+    // Tüm metodlar için yetkilendirme
     public class PersonelController : Controller
     {
         private readonly AppDbContext _context;
@@ -22,12 +22,13 @@ namespace ZeynepBeautySaloon.Controllers
             var personeller = await _context.Personeller.ToListAsync();
             return View(personeller);
         }
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Personel personel)
@@ -42,7 +43,7 @@ namespace ZeynepBeautySaloon.Controllers
             TempData["msj"] = "Hata! Personel eklenemedi.";
             return View(personel);
         }
-
+        
         public IActionResult PersonelDetay(int? id)
         {
             if (id is null)
@@ -60,7 +61,7 @@ namespace ZeynepBeautySaloon.Controllers
 
             return View(personel);
         }
-
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -70,7 +71,7 @@ namespace ZeynepBeautySaloon.Controllers
 
             return View(personel);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Personel personel)
@@ -96,7 +97,7 @@ namespace ZeynepBeautySaloon.Controllers
             TempData["msj"] = "Hata! Güncelleme yapılamadı.";
             return View(personel);
         }
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -107,27 +108,41 @@ namespace ZeynepBeautySaloon.Controllers
             return View(personel);
         }
 
+
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
-            var personel = _context.Personeller.Find(id);
-            if (personel != null)
+            var personel = _context.Personeller
+                .Include(p => p.Appointments) // Include related appointments
+                .FirstOrDefault(p => p.Id == id);
+
+            if (personel == null)
             {
-                _context.Personeller.Remove(personel);
-                _context.SaveChanges();
-                TempData["msj"] = "Personel başarıyla silindi.";
+                TempData["msj"] = "Personel bulunamadı.";
+                return RedirectToAction(nameof(Index));
             }
-            else
+
+            if (personel.Appointments.Any())
             {
-                TempData["msj"] = "Silme işlemi başarısız.";
+                TempData["msj"] = "Bu personel silinemez çünkü ilişkili randevuları var.";
+                return RedirectToAction(nameof(Index));
             }
+
+            _context.Personeller.Remove(personel);
+            _context.SaveChanges();
+            TempData["msj"] = "Personel başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool PersonelExists(int id)
         {
             return _context.Personeller.Any(e => e.Id == id);
         }
+
+
+
     }
 }
