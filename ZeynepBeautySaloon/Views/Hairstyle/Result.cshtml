@@ -1,0 +1,32 @@
+﻿<h2>Sonuçlar</h2>
+
+@if (ViewBag.ResultImagesBase64 != null && ViewBag.ResultImagesBase64.Count > 0)
+{
+    <div class="row">
+        @{
+            int i = 0;
+        }
+        @foreach (var base64Image in ViewBag.ResultImagesBase64)
+        {
+            <div class="col-md-4">
+                <h3>Saç Tipi: @ViewBag.SelectedHairTypes[i]</h3>
+                <img src="data:image/jpeg;base64,@base64Image" class="img-fluid" />
+            </div>
+            i++;
+        }
+    </div>
+}
+else
+{
+    <p>API'den sonuç alınamadı.</p>
+}
+
+@if (ViewBag.Error != null)
+{
+    @foreach (var error in ViewBag.Error)
+    {
+        <div class="alert alert-danger">
+            @error
+        </div>
+    }
+}

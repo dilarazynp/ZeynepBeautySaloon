@@ -4,48 +4,60 @@
     ViewData["Title"] = "Personel Düzenle";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="text-center">@ViewData["Title"]</h2>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Ad" class="control-label"></label>
-                <input asp-for="Ad" class="form-control" />
-                <span asp-validation-for="Ad" class="text-danger"></span>
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="Id" />
+                    <div class="form-group">
+                        <label asp-for="Ad" class="control-label"></label>
+                        <input asp-for="Ad" class="form-control" />
+                        <span asp-validation-for="Ad" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Soyad" class="control-label"></label>
+                        <input asp-for="Soyad" class="form-control" />
+                        <span asp-validation-for="Soyad" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Uzmanlik" class="control-label"></label>
+                        <input asp-for="Uzmanlik" class="form-control" />
+                        <span asp-validation-for="Uzmanlik" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Cinsiyet" class="control-label"></label>
+                        <select asp-for="Cinsiyet" class="form-control">
+                            <option value="Kadın">Kadın</option>
+                            <option value="Erkek">Erkek</option>
+                        </select>
+                        <span asp-validation-for="Cinsiyet" class="text-danger"></span>
+                    </div>
+                    <div class="form-group form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" asp-for="MusaitlikDurumu" /> @Html.DisplayNameFor(model => model.MusaitlikDurumu)
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="FotografUrl" class="control-label"></label>
+                        <input asp-for="FotografUrl" class="form-control" />
+                        <span asp-validation-for="FotografUrl" class="text-danger"></span>
+                    </div>
+                    <div class="form-group text-center">
+                        <input type="submit" value="Kaydet" class="btn btn-primary" />
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Soyad" class="control-label"></label>
-                <input asp-for="Soyad" class="form-control" />
-                <span asp-validation-for="Soyad" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Uzmanlik" class="control-label"></label>
-                <input asp-for="Uzmanlik" class="form-control" />
-                <span asp-validation-for="Uzmanlik" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="MusaitlikDurumu" /> @Html.DisplayNameFor(model => model.MusaitlikDurumu)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="FotografUrl" class="control-label"></label>
-                <input asp-for="FotografUrl" class="form-control" />
-                <span asp-validation-for="FotografUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Kaydet" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Listeye Geri Dön</a>
+<div class="text-center mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Listeye Geri Dön</a>
 </div>
 
 @section Scripts {

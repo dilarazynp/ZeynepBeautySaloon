@@ -28,13 +28,16 @@
                 @Html.DisplayNameFor(model => model.Saat)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Uye)
+                @Html.DisplayNameFor(model => model.Uye.Ad)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Islem)
+                @Html.DisplayNameFor(model => model.Uye.Soyad)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Personel)
+                @Html.DisplayNameFor(model => model.Islem.IslemAdi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Islem.Personel.Ad)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Ucret)
@@ -56,7 +59,10 @@
                     @Html.DisplayFor(modelItem => item.Saat)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Uye.UserName)
+                    @Html.DisplayFor(modelItem => item.Uye.Ad)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Uye.Soyad)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Islem.IslemAdi)

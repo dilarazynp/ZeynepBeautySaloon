@@ -1,75 +1,47 @@
 ﻿@model IEnumerable<ZeynepBeautySaloon.Models.Islemler>
 
 @{
-    ViewData["Title"] = "İşlem Listesi";
+    ViewData["Title"] = "Hizmetlerimiz";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="text-center">@ViewData["Title"]</h2>
 
 @if (TempData["msj"] != null)
 {
-    <div class="alert alert-info">@TempData["msj"]</div>
+    <div class="alert alert-info text-center">@TempData["msj"]</div>
 }
 
 @if (User.IsInRole("Admin"))
 {
-    <p>
-        <a asp-action="Create" class="btn btn-success">Yeni İşlem Ekle</a>
-    </p>
+    <div class="text-center mb-3">
+        <a asp-action="Create" class="btn btn-success">Yeni Hizmet Ekle</a>
+    </div>
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.IslemAdi)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sure)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ucret)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Personel)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IslemAdi)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Sure)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ucret)
-                </td>
-                <td>
-                    @if (item.Personel != null)
-                    {
-                        @Html.DisplayFor(modelItem => item.Personel.Ad)
-                    }
-                    else
-                    {
-                        <span>Atanmamış</span>
-                    }
-                </td>
-                <td>
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
-                        <text> | </text>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Sil</a>
-                        <text> | </text>
-                    }
-                    <a asp-action="IslemDetay" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@item.IslemAdi</h5>
+                    <p class="card-text">
+                        Süre: @item.Sure dakika<br>
+                        Ücret: @item.Ucret ₺<br>
+                        Personel: @(item.Personel != null ? item.Personel.Ad : "Atanmamış")
+                    </p>
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="IslemDetay" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <div>
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Sil</a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,0 +1,42 @@
+﻿<form asp-controller="Hairstyle" asp-action="UploadHairstyle" method="post" enctype="multipart/form-data">
+    <input type="file" name="imageFile" />
+
+    <label for="hairType1">Saç Tipi 1:</label>
+    <select name="hairType1">
+        <option value="">Seçiniz</option>
+        @foreach (var hairType in ViewBag.HairTypeNames)
+        {
+            <option value="@hairType.Key">@hairType.Value</option>
+        }
+    </select>
+    <br />
+
+    <label for="hairType2">Saç Tipi 2:</label>
+    <select name="hairType2">
+        <option value="">Seçiniz</option>
+        @foreach (var hairType in ViewBag.HairTypeNames)
+        {
+            <option value="@hairType.Key">@hairType.Value</option>
+        }
+    </select>
+    <br />
+
+    <label for="hairType3">Saç Tipi 3:</label>
+    <select name="hairType3">
+        <option value="">Seçiniz</option>
+        @foreach (var hairType in ViewBag.HairTypeNames)
+        {
+            <option value="@hairType.Key">@hairType.Value</option>
+        }
+    </select>
+    <br />
+
+    <button type="submit">Yükle</button>
+</form>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}

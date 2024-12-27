@@ -11,7 +11,7 @@ using ZeynepBeautySaloon.Data;
 
 namespace ZeynepBeautySaloon.Controllers
 {
-    [Authorize] 
+    [Authorize]
     public class AppointmentController : Controller
     {
         private readonly AppDbContext _context;
@@ -21,7 +21,7 @@ namespace ZeynepBeautySaloon.Controllers
             _context = context;
         }
 
-       
+
         public async Task<IActionResult> Index()
         {
             var currentUserId = HttpContext.Session.GetString("UserId");
@@ -46,11 +46,11 @@ namespace ZeynepBeautySaloon.Controllers
             return View(await randevular.ToListAsync());
         }
 
-        
+
         //[Authorize(Roles = "User")]    değistiriidkk **********
         public IActionResult Randevu()
         {
-           
+
             ViewData["Personeller"] = new SelectList(_context.Personeller.Where(p => p.MusaitlikDurumu), "Id", "Ad");
             return View();
         }
@@ -131,7 +131,7 @@ namespace ZeynepBeautySaloon.Controllers
                 Tarih = Tarih,
                 Saat = Saat,
                 UyeId = uyeId,
-                Ucret = islem.Ucret, 
+                Ucret = islem.Ucret,
                 OnayDurumu = false
             };
 
@@ -142,7 +142,7 @@ namespace ZeynepBeautySaloon.Controllers
             return RedirectToAction("Index");
         }
 
-        
+
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)

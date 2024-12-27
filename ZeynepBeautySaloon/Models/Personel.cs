@@ -18,6 +18,9 @@ namespace ZeynepBeautySaloon.Models
         [Required(ErrorMessage = "Müsaitlik durumu zorunludur.")]
         public bool MusaitlikDurumu { get; set; }
 
+        [Required(ErrorMessage = "Cinsiyet alanı zorunludur.")]
+        public string Cinsiyet { get; set; }
+
         public string? FotografUrl { get; set; } // İsteğe bağlı
 
         public virtual ICollection<Islemler>? Islemler { get; set; } // Personelin yapabildiği işlemler

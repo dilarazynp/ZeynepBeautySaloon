@@ -1,19 +1,13 @@
 ﻿@model ZeynepBeautySaloon.Models.Personel
 
 @{
-    ViewData["Title"] = "Personel Sil";
+    ViewData["Title"] = "Personel Detayları";
 }
 
 <h2 class="text-center">@ViewData["Title"]</h2>
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger text-center">@TempData["Error"]</div>
-}
-
-<h3 class="text-center">Silmek istediğinize emin misiniz?</h3>
-<hr />
 <div class="card mb-4">
+    <img src="@Model.FotografUrl" class="card-img-top" alt="@Model.Ad @Model.Soyad">
     <div class="card-body">
         <dl class="row">
             <dt class="col-sm-3">
@@ -57,9 +51,10 @@
 </div>
 
 <div class="text-center">
-    <form asp-action="Delete" method="post" class="d-inline">
-        <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Sil" class="btn btn-danger" />
-    </form>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Düzenle</a>
+        <text> | </text>
+    }
     <a asp-action="Index" class="btn btn-secondary">Listeye Geri Dön</a>
 </div>

@@ -16,7 +16,6 @@ namespace ZeynepBeautySaloon.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Admin,User")]
         public IActionResult Index()
         {
             var islemler = _context.Islemler.Include(i => i.Personel).ToList();
@@ -65,7 +64,6 @@ namespace ZeynepBeautySaloon.Controllers
             return View(islem);
         }
 
-        [Authorize(Roles = "Admin,User")]
         public IActionResult IslemDetay(int? id)
         {
             if (id == null)

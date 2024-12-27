@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ZeynepBeautySaloon.Models;
-using Microsoft.AspNetCore.Authorization;
 using ZeynepBeautySaloon.Data;
+using ZeynepBeautySaloon.Models;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json.Linq;
 
 namespace ZeynepBeautySaloon.Controllers
 {
-    // Tüm metodlar için yetkilendirme
     public class PersonelController : Controller
     {
         private readonly AppDbContext _context;
@@ -19,64 +19,76 @@ namespace ZeynepBeautySaloon.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var personeller = await _context.Personeller.ToListAsync();
-            return View(personeller);
+            return View(await _context.Personeller.ToListAsync());
         }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var personel = await _context.Personeller
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (personel == null)
+            {
+                return NotFound();
+            }
+
+            return View(personel);
+        }
+
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Personel personel)
+        public async Task<IActionResult> Create([Bind("Id,Ad,Soyad,Uzmanlik,MusaitlikDurumu,Cinsiyet,FotografUrl")] Personel personel)
         {
             if (ModelState.IsValid)
             {
+                if (string.IsNullOrEmpty(personel.FotografUrl))
+                {
+                    personel.FotografUrl = await GetRandomPhotoUrl(personel.Cinsiyet);
+                }
+
                 _context.Add(personel);
-                _context.SaveChanges();
-                TempData["msj"] = "Personel başarıyla eklendi.";
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            TempData["msj"] = "Hata! Personel eklenemedi.";
             return View(personel);
         }
-        
-        public IActionResult PersonelDetay(int? id)
-        {
-            if (id is null)
-            {
-                TempData["msj"] = "Lütfen geçerli bir personel seçin.";
-                return RedirectToAction("Index");
-            }
 
-            var personel = _context.Personeller.FirstOrDefault(p => p.Id == id);
-            if (personel == null)
-            {
-                TempData["msj"] = "Personel bulunamadı.";
-                return RedirectToAction("Index");
-            }
-
-            return View(personel);
-        }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
             var personel = await _context.Personeller.FindAsync(id);
-            if (personel == null) return NotFound();
-
+            if (personel == null)
+            {
+                return NotFound();
+            }
             return View(personel);
         }
-        [Authorize(Roles = "Admin")]
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Personel personel)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Ad,Soyad,Uzmanlik,MusaitlikDurumu,Cinsiyet,FotografUrl")] Personel personel)
         {
-            if (id != personel.Id) return NotFound();
+            if (id != personel.Id)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -84,65 +96,84 @@ namespace ZeynepBeautySaloon.Controllers
                 {
                     _context.Update(personel);
                     await _context.SaveChangesAsync();
-                    TempData["msj"] = "Personel başarıyla güncellendi.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PersonelExists(personel.Id)) return NotFound();
-                    throw;
+                    if (!PersonelExists(personel.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-
-            TempData["msj"] = "Hata! Güncelleme yapılamadı.";
-            return View(personel);
-        }
-        [Authorize(Roles = "Admin")]
-        public IActionResult Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var personel = _context.Personeller.Find(id);
-            if (personel == null) return NotFound();
-
             return View(personel);
         }
 
-
-        [HttpPost, ActionName("Delete")]
         [Authorize(Roles = "Admin")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> Delete(int? id)
         {
-            var personel = _context.Personeller
-                .Include(p => p.Appointments) // Include related appointments
-                .FirstOrDefault(p => p.Id == id);
-
-            if (personel == null)
+            if (id == null)
             {
-                TempData["msj"] = "Personel bulunamadı.";
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
 
-            if (personel.Appointments.Any())
+            var personel = await _context.Personeller
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (personel == null)
             {
-                TempData["msj"] = "Bu personel silinemez çünkü ilişkili randevuları var.";
-                return RedirectToAction(nameof(Index));
+                return NotFound();
+            }
+
+            return View(personel);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var personel = await _context.Personeller.FindAsync(id);
+            if (personel == null)
+            {
+                return NotFound();
+            }
+
+            // Personel'e bağlı randevular var mı kontrol et
+            var hasAppointments = await _context.Appointments.AnyAsync(a => a.PersonelId == id);
+            if (hasAppointments)
+            {
+                TempData["Error"] = "Bu personel silinemez çünkü bağlı randevuları var.";
+                return RedirectToAction(nameof(Delete), new { id });
             }
 
             _context.Personeller.Remove(personel);
-            _context.SaveChanges();
-            TempData["msj"] = "Personel başarıyla silindi.";
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
 
         private bool PersonelExists(int id)
         {
             return _context.Personeller.Any(e => e.Id == id);
         }
 
-
-
+        private async Task<string> GetRandomPhotoUrl(string cinsiyet)
+        {
+            using (var client = new HttpClient())
+            {
+                var genderQuery = cinsiyet.ToLower() == "erkek" ? "male" : "female";
+                var response = await client.GetAsync($"https://randomuser.me/api/?gender={genderQuery}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var data = JObject.Parse(json);
+                    var photoUrl = data["results"]?[0]?["picture"]?["large"]?.ToString();
+                    return photoUrl ?? "https://via.placeholder.com/150";
+                }
+                return "https://via.placeholder.com/150";
+            }
+        }
     }
 }

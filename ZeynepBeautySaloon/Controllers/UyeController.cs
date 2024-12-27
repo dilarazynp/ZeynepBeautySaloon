@@ -33,6 +33,11 @@ namespace ZeynepBeautySaloon.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (uye.Email == AdminEmail)
+                {
+                    ModelState.AddModelError("Email", "Bu e-posta adresi kullanılamaz.");
+                }
+
                 if (_context.Uyeler.Any(u => u.UserName == uye.UserName))
                 {
                     ModelState.AddModelError("UserName", "Kullanıcı adı zaten kayıtlı.");

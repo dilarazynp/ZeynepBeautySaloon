@@ -21,6 +21,7 @@ builder.Services.AddSession(options =>
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Çerezler yalnýzca HTTPS üzerinden gönderilir
 });
 
+// Kimlik doðrulama hizmetini ekleyin
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -50,6 +51,13 @@ builder.Services.AddLogging(config =>
     // config.AddFile("Logs/myapp-{Date}.txt");
 });
 
+builder.Services.AddHttpClient("HairstyleClient", client =>
+{
+    client.BaseAddress = new Uri("https://hairstyle-changer.p.rapidapi.com/");
+    client.DefaultRequestHeaders.Add("x-rapidapi-key", "1891f2f6bdmshf4a939ef30e048bp15aa29jsncb5b3698e673"); // GÜNCEL API ANAHTARINIZI BURAYA YAZIN
+    client.DefaultRequestHeaders.Add("x-rapidapi-host", "hairstyle-changer.p.rapidapi.com");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -65,6 +73,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseCookiePolicy(); // Cookie policy middleware
 
 app.UseSession();
 
@@ -72,9 +81,11 @@ app.UseRouting();
 app.UseAuthentication(); // Authentication middleware
 app.UseAuthorization();
 
-// Varsayýlan rota
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();

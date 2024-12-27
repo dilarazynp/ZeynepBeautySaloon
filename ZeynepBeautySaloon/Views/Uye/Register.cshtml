@@ -4,26 +4,26 @@
     ViewData["Title"] = "Üye Ol";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2 class="text-center">@ViewData["Title"]</h2>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Register">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="d-flex justify-content-center">
+    <div class="col-md-6">
+        <form asp-action="Register" class="p-4 border rounded shadow-sm">
+            <div asp-validation-summary="ModelOnly" class="text-warning"></div>
             <div class="form-group">
                 <label asp-for="Ad" class="control-label"></label>
                 <input asp-for="Ad" class="form-control" />
-                <span asp-validation-for="Ad" class="text-danger"></span>
+                <span asp-validation-for="Ad" class="text-warning"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Soyad" class="control-label"></label>
                 <input asp-for="Soyad" class="form-control" />
-                <span asp-validation-for="Soyad" class="text-danger"></span>
+                <span asp-validation-for="Soyad" class="text-warning"></span>
             </div>
             <div class="form-group">
                 <label asp-for="UserName" class="control-label"></label>
                 <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
+                <span asp-validation-for="UserName" class="text-warning"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Cinsiyet" class="control-label"></label>
@@ -31,35 +31,35 @@
                     <option value="">Seçiniz</option>
                     <option value="Kadın">Kadın</option>
                     <option value="Erkek">Erkek</option>
-                    <option value="Diğer">Diğer</option>
                 </select>
-                <span asp-validation-for="Cinsiyet" class="text-danger"></span>
+                <span asp-validation-for="Cinsiyet" class="text-warning"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
                 <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <span asp-validation-for="Email" class="text-warning"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Telefon" class="control-label"></label>
                 <input asp-for="Telefon" class="form-control" />
-                <span asp-validation-for="Telefon" class="text-danger"></span>
+                <span asp-validation-for="Telefon" class="text-warning"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Password" class="control-label">Şifre</label>
                 <input type="password" asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
+                <span asp-validation-for="Password" class="text-warning"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group text-center">
                 <input type="submit" value="Üye Ol" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Login">Zaten Üye Misiniz? Giriş Yapın</a>
+<div class="text-center mt-3">
+    <a asp-action="Login" class="btn btn-secondary">Zaten Üye Misiniz? Giriş Yapın</a>
 </div>
+
 
 @section Scripts {
     @{
