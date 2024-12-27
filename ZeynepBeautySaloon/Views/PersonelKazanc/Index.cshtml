@@ -1,0 +1,32 @@
+﻿@model IEnumerable<ZeynepBeautySaloon.DTOs.PersonelKazancDto>
+
+@{
+    ViewData["Title"] = "Admin Paneli - Personel Kazançları";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+@if (Model != null && Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Personel Adı</th>
+                <th>Toplam Kazanç</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var kazanc in Model)
+            {
+                <tr>
+                    <td>@kazanc.PersonelAdi</td>
+                    <td>@kazanc.ToplamKazanc</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Veri bulunamadı.</p>
+}

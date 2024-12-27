@@ -51,6 +51,9 @@ builder.Services.AddLogging(config =>
     // config.AddFile("Logs/myapp-{Date}.txt");
 });
 
+// API için Swagger servislerini ekliyoruz.
+builder.Services.AddSwaggerGen(); // Swagger'ý ekliyoruz
+
 builder.Services.AddHttpClient("HairstyleClient", client =>
 {
     client.BaseAddress = new Uri("https://hairstyle-changer.p.rapidapi.com/");
@@ -80,6 +83,13 @@ app.UseSession();
 app.UseRouting();
 app.UseAuthentication(); // Authentication middleware
 app.UseAuthorization();
+
+// **Swagger Middleware** - Swagger'ý aktif hale getiriyoruz
+app.UseSwagger();  // Swagger'ý kullanmaya baþla
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "ZeynepBeautySaloon API V1"); // Swagger UI endpoint'i
+});
 
 app.UseEndpoints(endpoints =>
 {
