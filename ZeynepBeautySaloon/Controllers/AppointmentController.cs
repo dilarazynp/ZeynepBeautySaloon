@@ -47,7 +47,7 @@ namespace ZeynepBeautySaloon.Controllers
         }
 
 
-        //[Authorize(Roles = "User")]    değistiriidkk **********
+        
         public IActionResult Randevu()
         {
 
@@ -95,15 +95,32 @@ namespace ZeynepBeautySaloon.Controllers
         // POST: Randevu alma işlemi
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         public async Task<IActionResult> RandevuAl(int PersonelId, int IslemId, DateTime Tarih, TimeSpan Saat)
         {
             // Session'dan UserId'yi al
-            if (!int.TryParse(HttpContext.Session.GetString("UserId"), out int uyeId))
+            if (!int.TryParse(HttpContext.Session.GetString("UserId"), out int uyeId) && !User.IsInRole("Admin"))
             {
                 // UserId alınamazsa, giriş yapmaya yönlendir
                 TempData["msj"] = "Randevu alabilmek için giriş yapmalısınız.";
                 return RedirectToAction("Login", "Uye");
+            }
+
+            // Geçmiş bir tarih ve saat kontrolü
+            var selectedDateTime = Tarih.Add(Saat);
+            if (selectedDateTime < DateTime.Now)
+            {
+                TempData["msj"] = "Geçmiş bir tarihe randevu alamazsınız.";
+                return RedirectToAction("Randevu");
+            }
+
+            // Aynı gün ve saatte farklı personelden randevu kontrolü
+            var existingAppointment = await _context.Appointments
+                .AnyAsync(a => a.UyeId == uyeId && a.Tarih.Date == Tarih.Date && a.Saat == Saat);
+            if (existingAppointment)
+            {
+                TempData["msj"] = "Aynı gün ve saatte farklı bir personelden randevu alamazsınız.";
+                return RedirectToAction("Randevu");
             }
 
             // Seçilen işlem ve personel bilgisini al
@@ -130,7 +147,7 @@ namespace ZeynepBeautySaloon.Controllers
                 IslemId = IslemId,
                 Tarih = Tarih,
                 Saat = Saat,
-                UyeId = uyeId,
+                UyeId = User.IsInRole("Admin") ? 0 : uyeId, // Admin için UyeId 0 olabilir
                 Ucret = islem.Ucret,
                 OnayDurumu = false
             };
@@ -169,112 +186,6 @@ namespace ZeynepBeautySaloon.Controllers
             }
 
             return View(randevu);
-        }
-
-        // GET: Randevu/Create (Admin için)
-        [Authorize(Roles = "Admin")]
-        public IActionResult Create()
-        {
-            ViewData["UyeId"] = new SelectList(_context.Uyeler, "Id", "UserName");
-            ViewData["PersonelId"] = new SelectList(_context.Personeller.Where(p => p.MusaitlikDurumu), "Id", "Ad");
-            ViewData["IslemId"] = new SelectList(_context.Islemler, "Id", "IslemAdi");
-            return View();
-        }
-
-        // POST: Randevu/Create (Admin için)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([Bind("Id,Tarih,Saat,PersonelId,IslemId,UyeId,Ucret,OnayDurumu")] Appointment appointment)
-        {
-            if (ModelState.IsValid)
-            {
-                // İşlem bilgisini al ve ücreti ata
-                var islem = await _context.Islemler.FindAsync(appointment.IslemId);
-                if (islem == null)
-                {
-                    TempData["msj"] = "İşlem bulunamadı.";
-                    return View(appointment);
-                }
-                appointment.Ucret = islem.Ucret;
-
-                _context.Add(appointment);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            ViewData["UyeId"] = new SelectList(_context.Uyeler, "Id", "UserName", appointment.UyeId);
-            ViewData["PersonelId"] = new SelectList(_context.Personeller.Where(p => p.MusaitlikDurumu), "Id", "Ad", appointment.PersonelId);
-            ViewData["IslemId"] = new SelectList(_context.Islemler, "Id", "IslemAdi", appointment.IslemId);
-            return View(appointment);
-        }
-
-        // GET: Randevu/Edit/5 (Admin için)
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var randevu = await _context.Appointments.FindAsync(id);
-            if (randevu == null)
-            {
-                return NotFound();
-            }
-
-            ViewData["UyeId"] = new SelectList(_context.Uyeler, "Id", "UserName", randevu.UyeId);
-            ViewData["PersonelId"] = new SelectList(_context.Personeller.Where(p => p.MusaitlikDurumu), "Id", "Ad", randevu.PersonelId);
-            ViewData["IslemId"] = new SelectList(_context.Islemler, "Id", "IslemAdi", randevu.IslemId);
-            return View(randevu);
-        }
-
-        // POST: Randevu/Edit/5 (Admin için)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Tarih,Saat,PersonelId,IslemId,UyeId,Ucret,OnayDurumu")] Appointment appointment)
-        {
-            if (id != appointment.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // İşlem bilgisini al ve ücreti güncelle
-                    var islem = await _context.Islemler.FindAsync(appointment.IslemId);
-                    if (islem == null)
-                    {
-                        TempData["msj"] = "İşlem bulunamadı.";
-                        return View(appointment);
-                    }
-                    appointment.Ucret = islem.Ucret;
-
-                    _context.Update(appointment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!AppointmentExists(appointment.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-
-            ViewData["UyeId"] = new SelectList(_context.Uyeler, "Id", "UserName", appointment.UyeId);
-            ViewData["PersonelId"] = new SelectList(_context.Personeller.Where(p => p.MusaitlikDurumu), "Id", "Ad", appointment.PersonelId);
-            ViewData["IslemId"] = new SelectList(_context.Islemler, "Id", "IslemAdi", appointment.IslemId);
-            return View(appointment);
         }
 
         // POST: Randevu/Onayla/5 (Admin için)

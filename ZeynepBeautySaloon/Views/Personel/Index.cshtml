@@ -4,7 +4,7 @@
     ViewData["Title"] = "Personel Listesi";
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
+<h2 class="text-center my-4 text-uppercase" style="font-weight: 700; color: #4A4E69;">@ViewData["Title"]</h2>
 
 @if (TempData["msj"] != null)
 {
@@ -13,32 +13,35 @@
 
 @if (User.IsInRole("Admin"))
 {
-    <div class="text-center mb-3">
-        <a asp-action="Create" class="btn btn-success">Yeni Personel Ekle</a>
+    <div class="text-center mb-4">
+        <a asp-action="Create" class="btn btn-success shadow-sm" style="padding: 12px 24px; font-size: 1.1rem; border-radius: 8px;">
+            Yeni Personel Ekle
+        </a>
     </div>
 }
 
-<div class="row">
+<div class="row g-4">
     @foreach (var item in Model)
     {
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <img src="@item.FotografUrl" class="card-img-top" alt="@item.Ad @item.Soyad">
-                <div class="card-body">
-                    <h5 class="card-title">@item.Ad @item.Soyad</h5>
-                    <p class="card-text">
-                        Uzmanlık: @item.Uzmanlik<br>
-                        Müsaitlik Durumu: @Html.DisplayFor(modelItem => item.MusaitlikDurumu)<br>
-                        Cinsiyet: @item.Cinsiyet
+        <div class="col-md-4 col-sm-6">
+            <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden; background: linear-gradient(145deg, #F8C291, #E77F67);">
+                <div class="card-body text-center" style="padding: 30px; color: #fff;">
+                    <h5 class="card-title mb-3" style="font-weight: bold; font-size: 1.6rem;">@item.Ad @item.Soyad</h5>
+                    <p class="card-text mb-4" style="font-size: 1rem;">
+                        <strong>Uzmanlık:</strong> @item.Uzmanlik<br>
                     </p>
-                    <div class="d-flex justify-content-between">
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-light btn-sm" style="font-size: 0.9rem; border-radius: 8px;">
+                            Detaylar
+                        </a>
                         @if (User.IsInRole("Admin"))
                         {
-                            <div>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Sil</a>
-                            </div>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm" style="font-size: 0.9rem; border-radius: 8px;">
+                                Düzenle
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm" style="font-size: 0.9rem; border-radius: 8px;">
+                                Sil
+                            </a>
                         }
                     </div>
                 </div>
@@ -46,3 +49,43 @@
         </div>
     }
 </div>
+
+<style>
+    body {
+        background: linear-gradient(135deg, #B3E5FC, #FFCCBC);
+        font-family: 'Arial', sans-serif;
+        color: #4A4E69;
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn {
+        transition: all 0.3s ease;
+    }
+
+        .btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    h2 {
+        letter-spacing: 2px;
+    }
+
+    .card-title {
+        letter-spacing: 1px;
+    }
+
+    .alert-info {
+        background-color: #FFEB3B;
+        color: #4A4E69;
+        font-weight: bold;
+    }
+</style>

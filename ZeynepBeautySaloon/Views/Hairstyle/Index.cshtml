@@ -1,42 +1,68 @@
-﻿<form asp-controller="Hairstyle" asp-action="UploadHairstyle" method="post" enctype="multipart/form-data">
-    <input type="file" name="imageFile" />
-
-    <label for="hairType1">Saç Tipi 1:</label>
-    <select name="hairType1">
-        <option value="">Seçiniz</option>
-        @foreach (var hairType in ViewBag.HairTypeNames)
-        {
-            <option value="@hairType.Key">@hairType.Value</option>
-        }
-    </select>
-    <br />
-
-    <label for="hairType2">Saç Tipi 2:</label>
-    <select name="hairType2">
-        <option value="">Seçiniz</option>
-        @foreach (var hairType in ViewBag.HairTypeNames)
-        {
-            <option value="@hairType.Key">@hairType.Value</option>
-        }
-    </select>
-    <br />
-
-    <label for="hairType3">Saç Tipi 3:</label>
-    <select name="hairType3">
-        <option value="">Seçiniz</option>
-        @foreach (var hairType in ViewBag.HairTypeNames)
-        {
-            <option value="@hairType.Key">@hairType.Value</option>
-        }
-    </select>
-    <br />
-
-    <button type="submit">Yükle</button>
-</form>
-
-@if (ViewBag.Error != null)
-{
-    <div class="alert alert-danger">
-        @ViewBag.Error
-    </div>
+﻿@{
+    ViewData["Title"] = "Saç Tipi Yükle";
 }
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+
+<div class="container mt-4">
+    <form asp-controller="Hairstyle" asp-action="UploadHairstyle" method="post" enctype="multipart/form-data" class="form-horizontal">
+        <div class="form-group row">
+            <label for="imageFile" class="col-sm-2 col-form-label">Resim Yükle:</label>
+            <div class="col-sm-10">
+                <input type="file" name="imageFile" class="form-control-file" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="hairType1" class="col-sm-2 col-form-label">Saç Tipi 1:</label>
+            <div class="col-sm-10">
+                <select name="hairType1" class="form-control">
+                    <option value="">Seçiniz</option>
+                    @foreach (var hairType in ViewBag.HairTypeNames)
+                    {
+                        <option value="@hairType.Key">@hairType.Value</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="hairType2" class="col-sm-2 col-form-label">Saç Tipi 2:</label>
+            <div class="col-sm-10">
+                <select name="hairType2" class="form-control">
+                    <option value="">Seçiniz</option>
+                    @foreach (var hairType in ViewBag.HairTypeNames)
+                    {
+                        <option value="@hairType.Key">@hairType.Value</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="hairType3" class="col-sm-2 col-form-label">Saç Tipi 3:</label>
+            <div class="col-sm-10">
+                <select name="hairType3" class="form-control">
+                    <option value="">Seçiniz</option>
+                    @foreach (var hairType in ViewBag.HairTypeNames)
+                    {
+                        <option value="@hairType.Key">@hairType.Value</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-sm-10 offset-sm-2">
+                <button type="submit" class="btn btn-primary">Yükle</button>
+            </div>
+        </div>
+    </form>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger mt-3">
+            @ViewBag.Error
+        </div>
+    }
+</div>

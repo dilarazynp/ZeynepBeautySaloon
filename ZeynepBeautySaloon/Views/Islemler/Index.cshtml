@@ -4,40 +4,52 @@
     ViewData["Title"] = "Hizmetlerimiz";
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
+<h2 class="text-center my-5" style="font-weight: 800; font-size: 4rem; color: #D1A6D1; text-transform: uppercase; letter-spacing: 5px; text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);">
+    @ViewData["Title"]
+</h2>
 
 @if (TempData["msj"] != null)
 {
-    <div class="alert alert-info text-center">@TempData["msj"]</div>
+    <div class="alert alert-info text-center" style="font-size: 1.2rem; background-color: #F4E1F4; color: #9C27B0; font-weight: 600; border: 2px solid #D1A6D1; border-radius: 15px; padding: 20px;">
+        @TempData["msj"]
+    </div>
 }
 
 @if (User.IsInRole("Admin"))
 {
-    <div class="text-center mb-3">
-        <a asp-action="Create" class="btn btn-success">Yeni Hizmet Ekle</a>
+    <div class="text-center mb-4">
+        <a asp-action="Create" class="btn btn-gradient shadow-lg" style="padding: 15px 40px; font-size: 1.4rem; border-radius: 50px; background: linear-gradient(45deg, #E1A7F7, #D1A6D1); color: white; text-transform: uppercase; box-shadow: 0 8px 15px rgba(173, 127, 209, 0.2);">
+            Yeni Hizmet Ekle
+        </a>
     </div>
 }
 
-<div class="row">
+<div class="row g-5">
     @foreach (var item in Model)
     {
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">@item.IslemAdi</h5>
-                    <p class="card-text">
-                        Süre: @item.Sure dakika<br>
-                        Ücret: @item.Ucret ₺<br>
-                        Personel: @(item.Personel != null ? item.Personel.Ad : "Atanmamış")
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow-lg card-hover" style="border-radius: 20px; overflow: hidden; background: #F9F1F9; position: relative; transition: transform 0.4s ease, box-shadow 0.4s ease;">
+                <div class="card-body text-center" style="padding: 40px; position: relative;">
+                    <h3 class="card-title mb-4" style="font-weight: 700; font-size: 2.4rem; color: #9C27B0; text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);">
+                        @item.IslemAdi
+                    </h3>
+                    <p class="card-text mb-4" style="font-size: 1.2rem; color: #6A4C9C; line-height: 1.8; font-weight: 500;">
+                        <span style="font-weight: bold; color: #9C27B0;">Süre:</span> @item.Sure dakika<br>
+                        <span style="font-weight: bold; color: #9C27B0;">Ücret:</span> @item.Ucret ₺<br>
+                        <span style="font-weight: bold; color: #9C27B0;">Personel:</span> @(item.Personel != null ? item.Personel.Ad : "Atanmamış")
                     </p>
-                    <div class="d-flex justify-content-between">
-                        <a asp-action="IslemDetay" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
+                    <div class="d-flex justify-content-center gap-4">
+                        <a asp-action="IslemDetay" asp-route-id="@item.Id" class="btn btn-outline-mauve btn-lg" style="font-size: 1.1rem; border-radius: 30px; padding: 12px 30px; border: 2px solid #9C27B0; color: #9C27B0; box-shadow: 0 6px 12px rgba(156, 39, 176, 0.2); transition: all 0.3s;">
+                            Detaylar
+                        </a>
                         @if (User.IsInRole("Admin"))
                         {
-                            <div>
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger">Sil</a>
-                            </div>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-lavender btn-lg" style="font-size: 1.1rem; border-radius: 30px; padding: 12px 30px; border: 2px solid #AB80F3; color: #AB80F3; box-shadow: 0 6px 12px rgba(171, 128, 243, 0.2);">
+                                Düzenle
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-pink btn-lg" style="font-size: 1.1rem; border-radius: 30px; padding: 12px 30px; border: 2px solid #F06292; color: #F06292; box-shadow: 0 6px 12px rgba(240, 98, 146, 0.2);">
+                                Sil
+                            </a>
                         }
                     </div>
                 </div>
@@ -45,3 +57,109 @@
         </div>
     }
 </div>
+
+<style>
+    /* Arka Plan Ayarları */
+    body {
+        background: radial-gradient(circle, #F4E1F4, #FFFFFF);
+        font-family: 'Arial', sans-serif;
+        color: #4A148C;
+    }
+
+    h2 {
+        text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        border-radius: 20px;
+        overflow: hidden;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+        background-color: #F9F1F9;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-hover:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn {
+        font-weight: 600;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+    }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-gradient {
+        background: linear-gradient(45deg, #E1A7F7, #D1A6D1);
+        color: white;
+    }
+
+        .btn-gradient:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 15px rgba(173, 127, 209, 0.2);
+        }
+
+    .alert-info {
+        font-size: 1.2rem;
+        background-color: #F4E1F4;
+        color: #9C27B0;
+        border: 2px solid #D1A6D1;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 6px 12px rgba(156, 39, 176, 0.2);
+    }
+
+    .card-title {
+        font-size: 2.4rem;
+        color: #9C27B0;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    .card-body:after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.2);
+        mix-blend-mode: overlay;
+        pointer-events: none;
+    }
+
+    .btn-outline-mauve {
+        border-color: #9C27B0;
+        color: #9C27B0;
+    }
+
+        .btn-outline-mauve:hover {
+            background-color: #9C27B0;
+            color: white;
+        }
+
+    .btn-outline-lavender {
+        border-color: #AB80F3;
+        color: #AB80F3;
+    }
+
+        .btn-outline-lavender:hover {
+            background-color: #AB80F3;
+            color: white;
+        }
+
+    .btn-outline-pink {
+        border-color: #F06292;
+        color: #F06292;
+    }
+
+        .btn-outline-pink:hover {
+            background-color: #F06292;
+            color: white;
+        }
+</style>

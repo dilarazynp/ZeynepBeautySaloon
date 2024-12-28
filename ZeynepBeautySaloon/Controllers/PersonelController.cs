@@ -30,7 +30,7 @@ namespace ZeynepBeautySaloon.Controllers
             }
 
             var personel = await _context.Personeller
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);//linq
             if (personel == null)
             {
                 return NotFound();
@@ -141,7 +141,7 @@ namespace ZeynepBeautySaloon.Controllers
                 return NotFound();
             }
 
-            // Personel'e bağlı randevular var mı kontrol et
+            // Personel'e bağlı randevular var mı kontrol et // LINQ
             var hasAppointments = await _context.Appointments.AnyAsync(a => a.PersonelId == id);
             if (hasAppointments)
             {

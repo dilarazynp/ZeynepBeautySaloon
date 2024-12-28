@@ -4,29 +4,172 @@
     ViewData["Title"] = "Üye Ol";
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+<style>
+    /* Genel sayfa stili */
+    body {
+        background-color: #f7f9fc;
+        font-family: 'Arial', sans-serif;
+    }
 
-<div class="d-flex justify-content-center">
-    <div class="col-md-6">
-        <form asp-action="Register" class="p-4 border rounded shadow-sm">
-            <div asp-validation-summary="ModelOnly" class="text-warning"></div>
+    h2 {
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 2rem;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* Giriş formu kutusunun stilini özelleştirme */
+    .form-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.1)); /* Şeffaf geçişli arka plan */
+        border-radius: 10px;
+    }
+
+    .form-card {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        max-width: 450px; /* Daha geniş form */
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .form-card:hover {
+            transform: scale(1.05); /* Hover efekti ile büyüme */
+        }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        padding: 12px;
+        width: 100%;
+        font-size: 1rem;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+        .form-control:focus {
+            border-color: #ff7e5f; /* Fokusta renk değişimi */
+            outline: none;
+        }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #444;
+    }
+
+    .form-group input[type="submit"] {
+        background-color: #ff7e5f;
+        border: none;
+        color: white;
+        padding: 15px;
+        font-size: 1.2rem;
+        width: 100%;
+        cursor: pointer;
+        border-radius: 8px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #feb47b; /* Hover efekti */
+            transform: translateY(-3px); /* Yükseklik efekti */
+        }
+
+    /* Şifre göster/gizle ikonu */
+    .input-group {
+        position: relative;
+    }
+
+    .input-group-text {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+    }
+
+        .input-group-text i {
+            color: #777;
+        }
+
+    .input-group-append {
+        height: 100%;
+    }
+
+    .alert {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        background-color: #d4edda;
+        color: #155724;
+        font-size: 1rem;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+    .form-group a {
+        font-size: 1.1rem;
+        color: #fff;
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+        .form-group a:hover {
+            color: #feb47b;
+        }
+
+</style>
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="form-container">
+    <div class="form-card">
+        <form asp-action="Register" method="post">
             <div class="form-group">
-                <label asp-for="Ad" class="control-label"></label>
-                <input asp-for="Ad" class="form-control" />
+                <label asp-for="Ad">Ad</label>
+                <input asp-for="Ad" class="form-control" placeholder="Adınızı girin" />
                 <span asp-validation-for="Ad" class="text-warning"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Soyad" class="control-label"></label>
-                <input asp-for="Soyad" class="form-control" />
+                <label asp-for="Soyad">Soyad</label>
+                <input asp-for="Soyad" class="form-control" placeholder="Soyadınızı girin" />
                 <span asp-validation-for="Soyad" class="text-warning"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserName" class="control-label"></label>
-                <input asp-for="UserName" class="form-control" />
+                <label asp-for="UserName">Kullanıcı Adı</label>
+                <input asp-for="UserName" class="form-control" placeholder="Kullanıcı adı girin" />
                 <span asp-validation-for="UserName" class="text-warning"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Cinsiyet" class="control-label"></label>
+                <label asp-for="Cinsiyet">Cinsiyet</label>
                 <select asp-for="Cinsiyet" class="form-control">
                     <option value="">Seçiniz</option>
                     <option value="Kadın">Kadın</option>
@@ -35,34 +178,52 @@
                 <span asp-validation-for="Cinsiyet" class="text-warning"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <label asp-for="Email">E-posta</label>
+                <input asp-for="Email" class="form-control" placeholder="E-posta adresinizi girin" />
                 <span asp-validation-for="Email" class="text-warning"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Telefon" class="control-label"></label>
-                <input asp-for="Telefon" class="form-control" />
+                <label asp-for="Telefon">Telefon</label>
+                <input asp-for="Telefon" class="form-control" placeholder="Telefon numaranızı girin" />
                 <span asp-validation-for="Telefon" class="text-warning"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Password" class="control-label">Şifre</label>
-                <input type="password" asp-for="Password" class="form-control" />
+                <label asp-for="Password">Şifre</label>
+                <div class="input-group">
+                    <input type="password" asp-for="Password" class="form-control" id="Password" placeholder="Şifrenizi girin" />
+                    <div class="input-group-append">
+                        <span class="input-group-text" onclick="togglePasswordVisibility('Password')">
+                            <i id="Password-icon" class="fa-solid fa-eye-slash"></i>
+                        </span>
+                    </div>
+                </div>
                 <span asp-validation-for="Password" class="text-warning"></span>
             </div>
             <div class="form-group text-center">
-                <input type="submit" value="Üye Ol" class="btn btn-primary" />
+                <input type="submit" value="Üye Ol" class="form-control" />
+            </div>
+            <div class="form-group text-center">
+                <a asp-action="Login" class="btn-secondary">Zaten Üye Misiniz? Giriş Yapın</a>
             </div>
         </form>
     </div>
 </div>
 
-<div class="text-center mt-3">
-    <a asp-action="Login" class="btn btn-secondary">Zaten Üye Misiniz? Giriş Yapın</a>
-</div>
-
-
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <script>
+        function togglePasswordVisibility(inputId) {
+            var passwordInput = document.getElementById(inputId);
+            var passwordIcon = document.getElementById(inputId + "-icon");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                passwordIcon.classList.remove("fa-eye-slash");
+                passwordIcon.classList.add("fa-eye");
+            } else {
+                passwordInput.type = "password";
+                passwordIcon.classList.remove("fa-eye");
+                passwordIcon.classList.add("fa-eye-slash");
+            }
+        }
+    </script>
 }

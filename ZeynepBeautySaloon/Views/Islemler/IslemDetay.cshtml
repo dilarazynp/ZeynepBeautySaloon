@@ -4,51 +4,119 @@
     ViewData["Title"] = "Hizmet Detayları";
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
+<h2 class="text-center my-5 text-primary" style="font-size: 2.5rem; font-weight: 700; letter-spacing: 1.5px;">
+    @ViewData["Title"]
+</h2>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <dl class="row">
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.IslemAdi)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.IslemAdi)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Sure)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Sure)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Ucret)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Ucret)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Personel)
-            </dt>
-            <dd class="col-sm-9">
-                @if (Model.Personel != null)
-                {
-                    @Html.DisplayFor(model => model.Personel.Ad)
-                }
-                else
-                {
-                    <span>Atanmamış</span>
-                }
-            </dd>
-        </dl>
+<div class="container">
+    <div class="card shadow-lg mb-5" style="border-radius: 15px; background: #f5f7fa;">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3 text-muted">
+                    @Html.DisplayNameFor(model => model.IslemAdi)
+                </dt>
+                <dd class="col-sm-9" style="font-size: 1.1rem; font-weight: 500;">
+                    @Html.DisplayFor(model => model.IslemAdi)
+                </dd>
+                <dt class="col-sm-3 text-muted">
+                    @Html.DisplayNameFor(model => model.Sure)
+                </dt>
+                <dd class="col-sm-9" style="font-size: 1.1rem; font-weight: 500;">
+                    @Html.DisplayFor(model => model.Sure) dakika
+                </dd>
+                <dt class="col-sm-3 text-muted">
+                    @Html.DisplayNameFor(model => model.Ucret)
+                </dt>
+                <dd class="col-sm-9" style="font-size: 1.1rem; font-weight: 500;">
+                    @Html.DisplayFor(model => model.Ucret) ₺
+                </dd>
+                <dt class="col-sm-3 text-muted">
+                    @Html.DisplayNameFor(model => model.Personel)
+                </dt>
+                <dd class="col-sm-9" style="font-size: 1.1rem; font-weight: 500;">
+                    @if (Model.Personel != null)
+                    {
+                        @Html.DisplayFor(model => model.Personel.Ad)
+                    }
+                    else
+                    {
+                        <span class="text-warning">Atanmamış</span>
+                    }
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg" style="border-radius: 25px; padding: 10px 30px; font-size: 1.1rem;">
+                Düzenle
+            </a>
+            <span class="mx-2">|</span>
+        }
+        <a asp-action="Index" class="btn btn-secondary btn-lg" style="border-radius: 25px; padding: 10px 30px; font-size: 1.1rem;">
+            Listeye Geri Dön
+        </a>
     </div>
 </div>
 
-<div class="text-center">
-    @if (User.IsInRole("Admin"))
-    {
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Düzenle</a>
-        <text> | </text>
+<style>
+    /* Genel Stil */
+    body {
+        background: #eceff1;
+        font-family: 'Arial', sans-serif;
+        color: #2c3e50;
     }
-    <a asp-action="Index" class="btn btn-secondary">Listeye Geri Dön</a>
-</div>
+
+    h2 {
+        color: #6c63ff;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-body {
+        background-color: #ffffff;
+        padding: 40px;
+    }
+
+    .text-muted {
+        color: #7d8c8d;
+    }
+
+    .btn {
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+    }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn-secondary {
+        background-color: #5d6d7e;
+        border-color: #5d6d7e;
+    }
+
+    .btn-warning {
+        background-color: #ffb74d;
+        border-color: #ffb74d;
+    }
+
+    .btn-lg {
+        font-size: 1.2rem;
+    }
+
+    .text-warning {
+        color: #f39c12;
+    }
+</style>

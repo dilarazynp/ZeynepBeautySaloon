@@ -5,17 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using ZeynepBeautySaloon.Models;
 using ZeynepBeautySaloon.Data;
+using BCrypt.Net;
 
 namespace ZeynepBeautySaloon.Controllers
 {
     public class UyeController : Controller
     {
         private readonly AppDbContext _context;
-
-        // DİKKAT: AdminEmail ve AdminPassword'u Environment Variable yerine veritabanından almanız daha güvenli.
-        private readonly string AdminEmail = Environment.GetEnvironmentVariable("AdminEmail") ?? "admin@admin.com";
-        // DİKKAT: Güvenlik açığı! Admin şifresini bu şekilde tutmak çok tehlikeli!
-        private readonly string AdminPassword = Environment.GetEnvironmentVariable("AdminPassword") ?? "sau";
 
         public UyeController(AppDbContext context)
         {
@@ -33,11 +29,6 @@ namespace ZeynepBeautySaloon.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (uye.Email == AdminEmail)
-                {
-                    ModelState.AddModelError("Email", "Bu e-posta adresi kullanılamaz.");
-                }
-
                 if (_context.Uyeler.Any(u => u.UserName == uye.UserName))
                 {
                     ModelState.AddModelError("UserName", "Kullanıcı adı zaten kayıtlı.");
@@ -58,8 +49,8 @@ namespace ZeynepBeautySaloon.Controllers
                     return View(uye);
                 }
 
-                // DİKKAT: Şifre artık hash'lenmeden kaydediliyor!
-                // uye.SetPassword(uye.PasswordHash); // Bu satırı kaldırıyoruz
+                // Şifreyi hash'leyip kaydet
+                uye.Password = BCrypt.Net.BCrypt.HashPassword(uye.Password);
                 uye.Rol = "User";
                 _context.Uyeler.Add(uye);
                 _context.SaveChanges();
@@ -85,22 +76,14 @@ namespace ZeynepBeautySaloon.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string Email, string Password)
         {
-            // ADMİN GİRİŞİ KONTROLÜ - BAŞLANGIÇ
-            if (Email == AdminEmail)
-            {
-                // DİKKAT: AdminPassword değişkeni, HAM ŞİFREYİ DEĞİL, HASH'LENMİŞ ŞİFREYİ TUTMALI.
-                if (Password == AdminPassword) // Güvenli Olmayan Karşılaştırma!
-                {
-                    await SignInUser(AdminEmail, "Admin");
-                    return RedirectToAction("Index", "Home");
-                }
-            }
-            // KULLANICI GİRİŞİ KONTROLÜ - GÜVENLİ DEĞİL!
+            // KULLANICI GİRİŞİ KONTROLÜ
             var uye = _context.Uyeler.SingleOrDefault(u => u.Email == Email);
-            // DİKKAT: Şifre artık hash'lenmeden, doğrudan karşılaştırılıyor!
-            if (uye != null && uye.Password == Password)
+            // Şifreyi hash'leyip karşılaştır
+            if (uye != null && BCrypt.Net.BCrypt.Verify(Password, uye.Password))
             {
                 await SignInUser(uye.UserName, uye.Rol);
+                HttpContext.Session.SetString("UserName", uye.UserName);
+                HttpContext.Session.SetString("Role", uye.Rol);
                 HttpContext.Session.SetString("UserId", uye.Id.ToString());
                 return RedirectToAction("Index", "Home");
             }
@@ -116,6 +99,111 @@ namespace ZeynepBeautySaloon.Controllers
             HttpContext.Session.Clear();
             Response.Cookies.Delete(".AspNetCore.Cookies");
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public IActionResult KullaniciPanel()
+        {
+            if (HttpContext.Session.GetString("Role") != "User")
+            {
+                TempData["msj"] = "Bu işlem sadece kullanıcılar içindir.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (!int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                TempData["msj"] = "Geçersiz kullanıcı.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var uye = _context.Uyeler.Find(userId);
+            if (uye == null)
+            {
+                TempData["msj"] = "Kullanıcı bulunamadı.";
+                return RedirectToAction("Index", "Home");
+            }
+
+            return View(uye);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateProfile(Uye uye)
+        {
+            if (!int.TryParse(HttpContext.Session.GetString("UserId"), out int userId))
+            {
+                TempData["ErrorMessage"] = "Güncelleme işlemi için giriş yapmalısınız.";
+                return RedirectToAction("Login", "Uye");
+            }
+
+            if (userId != uye.Id)
+            {
+                TempData["ErrorMessage"] = "Geçersiz kullanıcı.";
+                return RedirectToAction("KullaniciPanel");
+            }
+
+            if (ModelState.IsValid)
+            {
+                // E-posta, kullanıcı adı ve telefon numarasının benzersizliğini kontrol et
+                if (_context.Uyeler.Any(u => u.Email == uye.Email && u.Id != uye.Id))
+                {
+                    ModelState.AddModelError("Email", "E-posta zaten kayıtlı.");
+                }
+
+                if (_context.Uyeler.Any(u => u.UserName == uye.UserName && u.Id != uye.Id))
+                {
+                    ModelState.AddModelError("UserName", "Kullanıcı adı zaten kayıtlı.");
+                }
+
+                if (_context.Uyeler.Any(u => u.Telefon == uye.Telefon && u.Id != uye.Id))
+                {
+                    ModelState.AddModelError("Telefon", "Telefon numarası zaten kayıtlı.");
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    // ModelState hatalarını TempData'ya ekleyelim
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                    TempData["ErrorMessage"] = "Güncelleme işlemi başarısız oldu. Lütfen bilgilerinizi kontrol edin.";
+                    TempData["ModelStateErrors"] = errors;
+                    return RedirectToAction("KullaniciPanel");
+                }
+
+                try
+                {
+                    // Şifreyi hash'leyip kaydet
+                    var existingUser = await _context.Uyeler.AsNoTracking().FirstOrDefaultAsync(u => u.Id == uye.Id);
+                    if (existingUser != null && existingUser.Password != uye.Password)
+                    {
+                        uye.Password = BCrypt.Net.BCrypt.HashPassword(uye.Password);
+                    }
+
+                    _context.Update(uye);
+                    await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Bilgileriniz başarıyla güncellendi.";
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!_context.Uyeler.Any(e => e.Id == uye.Id))
+                    {
+                        TempData["ErrorMessage"] = "Kullanıcı bulunamadı.";
+                        return RedirectToAction("KullaniciPanel");
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            else
+            {
+                // ModelState hatalarını TempData'ya ekleyelim
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                TempData["ErrorMessage"] = "Güncelleme işlemi başarısız oldu. Lütfen bilgilerinizi kontrol edin.";
+                TempData["ModelStateErrors"] = errors;
+            }
+
+            return RedirectToAction("KullaniciPanel");
         }
 
         private async Task SignInUser(string userName, string role)

@@ -56,7 +56,6 @@
 <div>
     @if (User.IsInRole("Admin"))
     {
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Düzenle</a>
         if (!Model.OnayDurumu)
         {
             <form asp-action="Onayla" asp-route-id="@Model.Id" method="post" style="display:inline;">

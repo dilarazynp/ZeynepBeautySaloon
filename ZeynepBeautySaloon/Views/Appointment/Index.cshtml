@@ -11,12 +11,7 @@
     <div class="alert alert-info">@TempData["msj"]</div>
 }
 
-@if (User.IsInRole("Admin"))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-success">Yeni Randevu Ekle</a>
-    </p>
-}
+
 
 <table class="table">
     <thead>
@@ -28,22 +23,16 @@
                 @Html.DisplayNameFor(model => model.Saat)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Uye.Ad)
+                İşlem Adı
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Uye.Soyad)
+                Personel Adı
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Islem.IslemAdi)
+                Ücret
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Islem.Personel.Ad)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ucret)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OnayDurumu)
+                Onay Durumu
             </th>
             <th></th>
         </tr>
@@ -53,16 +42,10 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Tarih)
+                    @item.Tarih.ToString("dd/MM/yyyy")
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Saat)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Uye.Ad)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Uye.Soyad)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Islem.IslemAdi)
@@ -71,16 +54,15 @@
                     @Html.DisplayFor(modelItem => item.Islem.Personel.Ad)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Ucret)
+                    @Html.DisplayFor(modelItem => item.Ucret) ₺
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.OnayDurumu)
+                    @(item.OnayDurumu ? "Onaylandı" : "Onaylanmadı")
                 </td>
                 <td>
                     <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
                     @if (User.IsInRole("Admin"))
                     {
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning">Düzenle</a>
                         if (!item.OnayDurumu)
                         {
                             <form asp-action="Onayla" asp-route-id="@item.Id" method="post" style="display:inline;">

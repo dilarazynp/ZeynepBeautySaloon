@@ -29,7 +29,8 @@ namespace ZeynepBeautySaloon.Models
         [Phone(ErrorMessage = "Geçerli bir telefon numarası giriniz.")]
         public string Telefon { get; set; }
 
-        [Required]
+      
+
         public string Password { get; set; } // PasswordHash yerine Password
 
         public string Rol { get; set; } = "User";

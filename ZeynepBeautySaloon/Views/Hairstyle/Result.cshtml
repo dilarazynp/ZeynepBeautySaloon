@@ -1,32 +1,42 @@
-﻿<h2>Sonuçlar</h2>
-
-@if (ViewBag.ResultImagesBase64 != null && ViewBag.ResultImagesBase64.Count > 0)
-{
-    <div class="row">
-        @{
-            int i = 0;
-        }
-        @foreach (var base64Image in ViewBag.ResultImagesBase64)
-        {
-            <div class="col-md-4">
-                <h3>Saç Tipi: @ViewBag.SelectedHairTypes[i]</h3>
-                <img src="data:image/jpeg;base64,@base64Image" class="img-fluid" />
-            </div>
-            i++;
-        }
-    </div>
-}
-else
-{
-    <p>API'den sonuç alınamadı.</p>
+﻿@{
+    ViewData["Title"] = "Sonuçlar";
 }
 
-@if (ViewBag.Error != null)
-{
-    @foreach (var error in ViewBag.Error)
+<h2 class="text-center">@ViewData["Title"]</h2>
+
+<div class="container mt-4">
+    @if (ViewBag.ResultImagesBase64 != null && ViewBag.ResultImagesBase64.Count > 0)
     {
-        <div class="alert alert-danger">
-            @error
+        <div class="row">
+            @{
+                int i = 0;
+            }
+            @foreach (var base64Image in ViewBag.ResultImagesBase64)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="data:image/jpeg;base64,@base64Image" class="card-img-top img-fluid" alt="Saç Tipi @ViewBag.SelectedHairTypes[i]" />
+                        <div class="card-body">
+                            <h5 class="card-title">Saç Tipi: @ViewBag.SelectedHairTypes[i]</h5>
+                        </div>
+                    </div>
+                </div>
+                i++;
+            }
         </div>
     }
-}
+    else
+    {
+        <p class="text-center">API'den sonuç alınamadı.</p>
+    }
+
+    @if (ViewBag.Error != null)
+    {
+        @foreach (var error in ViewBag.Error)
+        {
+            <div class="alert alert-danger mt-3">
+                @error
+            </div>
+        }
+    }
+</div>

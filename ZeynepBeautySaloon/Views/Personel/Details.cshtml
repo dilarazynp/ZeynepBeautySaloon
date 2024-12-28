@@ -4,57 +4,86 @@
     ViewData["Title"] = "Personel Detayları";
 }
 
-<h2 class="text-center">@ViewData["Title"]</h2>
+<h2 class="text-center my-5" style="font-size: 2.5rem; font-weight: bold; color: #6A4C9C;">@ViewData["Title"]</h2>
 
-<div class="card mb-4">
-    <img src="@Model.FotografUrl" class="card-img-top" alt="@Model.Ad @Model.Soyad">
+<div class="card mb-4 shadow-lg border-0 rounded-4" style="background: linear-gradient(135deg, #F5E0F1, #E1C6D8);">
     <div class="card-body">
         <dl class="row">
-            <dt class="col-sm-3">
+            <dt class="col-sm-3" style="font-weight: 500; color: #9C27B0;">
                 @Html.DisplayNameFor(model => model.Ad)
             </dt>
-            <dd class="col-sm-9">
+            <dd class="col-sm-9" style="font-size: 1.2rem; color: #5F4B8B;">
                 @Html.DisplayFor(model => model.Ad)
             </dd>
-            <dt class="col-sm-3">
+
+            <dt class="col-sm-3" style="font-weight: 500; color: #9C27B0;">
                 @Html.DisplayNameFor(model => model.Soyad)
             </dt>
-            <dd class="col-sm-9">
+            <dd class="col-sm-9" style="font-size: 1.2rem; color: #5F4B8B;">
                 @Html.DisplayFor(model => model.Soyad)
             </dd>
-            <dt class="col-sm-3">
+
+            <dt class="col-sm-3" style="font-weight: 500; color: #9C27B0;">
                 @Html.DisplayNameFor(model => model.Uzmanlik)
             </dt>
-            <dd class="col-sm-9">
+            <dd class="col-sm-9" style="font-size: 1.2rem; color: #5F4B8B;">
                 @Html.DisplayFor(model => model.Uzmanlik)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.MusaitlikDurumu)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.MusaitlikDurumu)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.Cinsiyet)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.Cinsiyet)
-            </dd>
-            <dt class="col-sm-3">
-                @Html.DisplayNameFor(model => model.FotografUrl)
-            </dt>
-            <dd class="col-sm-9">
-                @Html.DisplayFor(model => model.FotografUrl)
             </dd>
         </dl>
     </div>
 </div>
 
-<div class="text-center">
+<!-- Düzenleme ve Listeye Dönme Butonları -->
+<div class="text-center mt-5">
     @if (User.IsInRole("Admin"))
     {
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Düzenle</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg" style="background-color: #D4A5A5; border: none; font-weight: bold; padding: 10px 30px; border-radius: 25px; color: #fff;">Düzenle</a>
         <text> | </text>
     }
-    <a asp-action="Index" class="btn btn-secondary">Listeye Geri Dön</a>
+    <a asp-action="Index" class="btn btn-secondary btn-lg" style="padding: 10px 30px; font-weight: bold; border-radius: 25px;">Listeye Geri Dön</a>
 </div>
+
+<!-- Custom Styles -->
+<style>
+    h2 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #6A4C9C;
+    }
+
+    .card {
+        background: linear-gradient(135deg, #F5E0F1, #E1C6D8);
+        border-radius: 25px;
+        padding: 20px;
+    }
+
+    .card-body {
+        font-size: 1.2rem;
+    }
+
+    .btn {
+        padding: 10px 30px;
+        font-weight: bold;
+        border-radius: 25px;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        transition: 0.3s;
+    }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+    .btn-warning {
+        background-color: #D4A5A5;
+        border: none;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background-color: #6A4C9C;
+        border: none;
+        color: #fff;
+    }
+</style>
