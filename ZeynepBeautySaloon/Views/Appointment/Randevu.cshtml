@@ -12,8 +12,12 @@
 <form asp-action="RandevuAl" method="post">
     <div class="form-group">
         <label for="PersonelId">Personel Seçiniz:</label>
-        <select id="PersonelId" name="PersonelId" class="form-control" asp-items="ViewBag.Personeller">
+        <select id="PersonelId" name="PersonelId" class="form-control">
             <option value="">Seçiniz</option>
+            @foreach (var personel in ViewBag.Personeller)
+            {
+                <option value="@personel.Id">@personel.Ad @personel.Soyad</option>
+            }
         </select>
     </div>
     <div class="form-group">
@@ -21,7 +25,6 @@
         <select id="IslemId" name="IslemId" class="form-control">
             <option value="">Seçiniz</option>
         </select>
-        <span id="ucret"></span>
     </div>
     <div class="form-group">
         <label for="Tarih">Tarih Seçiniz:</label>
@@ -35,10 +38,9 @@
     </div>
     <button type="submit" class="btn btn-primary">Randevu Al</button>
 </form>
-
-<!-- Randevularım Butonu -->
-<a href="/Appointment/Index" class="btn btn-secondary mt-3">Randevularım</a>
-
+<p>
+    <a asp-action="Index" class="btn btn-secondary">Randevularım</a>
+</p>
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -46,52 +48,26 @@
                 var personelId = $(this).val();
                 if (personelId) {
                     $.ajax({
-                        url: '/Appointment/CalisandanServisleriAl',
+                        url: '/Appointment/PersoneldenIslemleriAl',
                         type: 'GET',
-                        data: { calisanId: personelId },
+                        data: { personelId: personelId },
                         success: function (data) {
                             $('#IslemId').empty();
                             $('#IslemId').append($('<option>').text('Seçiniz').val(''));
                             $.each(data, function (i, item) {
                                 $('#IslemId').append($('<option>').text(item.islemAdi).val(item.id));
                             });
-                            $('#ucret').text('');
                         }
                     });
                 } else {
                     $('#IslemId').empty();
                     $('#IslemId').append($('<option>').text('Seçiniz').val(''));
-                    $('#ucret').text('');
                 }
             });
 
-            $('#IslemId').change(function () {
+            $('#PersonelId, #Tarih').change(function () {
                 var personelId = $('#PersonelId').val();
-                var islemId = $(this).val();
-                if (personelId && islemId) {
-                    $.ajax({
-                        url: '/Appointment/CalisandanServisleriAl',
-                        type: 'GET',
-                        data: { calisanId: personelId },
-                        success: function (data) {
-                            var selectedIslem = data.find(function (item) {
-                                return item.id == islemId;
-                            });
-                            if (selectedIslem) {
-                                $('#ucret').text('Ücret: ' + selectedIslem.ucret + ' TL');
-                            } else {
-                                $('#ucret').text('');
-                            }
-                        }
-                    });
-                } else {
-                    $('#ucret').text('');
-                }
-            });
-
-            $('#Tarih').change(function () {
-                var personelId = $('#PersonelId').val();
-                var tarih = $(this).val();
+                var tarih = $('#Tarih').val();
                 if (personelId && tarih) {
                     $.ajax({
                         url: '/Appointment/RandevuSaatleriniAl',

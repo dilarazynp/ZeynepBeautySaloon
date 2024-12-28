@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ZeynepBeautySaloon.Models.Appointment>
 
 @{
-    ViewData["Title"] = "Randevular";
+    ViewData["Title"] = "Randevularım";
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -10,8 +10,6 @@
 {
     <div class="alert alert-info">@TempData["msj"]</div>
 }
-
-
 
 <table class="table">
     <thead>
@@ -33,6 +31,9 @@
             </th>
             <th>
                 Onay Durumu
+            </th>
+            <th>
+                Üye Adı
             </th>
             <th></th>
         </tr>
@@ -60,24 +61,34 @@
                     @(item.OnayDurumu ? "Onaylandı" : "Onaylanmadı")
                 </td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
-                    @if (User.IsInRole("Admin"))
+                    @item.Uye.Ad @item.Uye.Soyad
+                </td>
+                <td>
+                    @if (item.Tarih.Add(item.Saat) < DateTime.Now)
                     {
-                        if (!item.OnayDurumu)
+                        <span class="text-danger">Tarihi Geçti</span>
+                    }
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info">Detaylar</a>
+                        @if (User.IsInRole("Admin"))
                         {
-                            <form asp-action="Onayla" asp-route-id="@item.Id" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-success">Onayla</button>
+                            if (!item.OnayDurumu)
+                            {
+                                <form asp-action="Onayla" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-success">Onayla</button>
+                                </form>
+                            }
+                            <form asp-action="IptalEt" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">İptal Et</button>
                             </form>
                         }
-                        <form asp-action="IptalEt" asp-route-id="@item.Id" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-danger">İptal Et</button>
-                        </form>
-                    }
-                    else if (item.UyeId.ToString() == Context.Session.GetString("UserId"))
-                    {
-                        <form asp-action="IptalEt" asp-route-id="@item.Id" method="post" style="display:inline;">
-                            <button type="submit" class="btn btn-danger">İptal Et</button>
-                        </form>
+                        else if (item.UyeId.ToString() == Context.Session.GetString("UserId"))
+                        {
+                            <form asp-action="IptalEt" asp-route-id="@item.Id" method="post" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">İptal Et</button>
+                            </form>
+                        }
                     }
                 </td>
             </tr>
